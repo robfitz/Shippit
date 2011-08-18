@@ -17,7 +17,7 @@ Multiplayful
     float:left;
 }
 .stream {
-    width:549;
+    width:540px;
     float:left;
     background-color:#fff;
     margin:4px 0 -4px -10px;
@@ -27,6 +27,22 @@ Multiplayful
     width:340px;
     float:left;
     padding:12px 20px;
+    position:fixed;
+    margin-left:540px; 
+}
+.info p {
+    margin:10px 0;
+}
+.info h3 {
+    margin-top:10px;
+}
+.info_thumb {
+    width:120px;
+    height:120px;
+    border:1px solid #d9d9d9;
+    padding:1px;
+    float:left;
+    margin-right:10px;
 }
     
 .stream_alert { 
@@ -40,17 +56,23 @@ Multiplayful
 
 .update {
     width:500px;
-    height:100px;
     padding:10px 20px;
     border-top:1px solid #d9d9d9;
     margin-top:-1px;
+    float:left;
+}
+.update p {
+    margin:4px 0;
 }
 .stream:first-child {
     border-top:0px solid white;
 }
 
+.update.selected {
+    background-color:#fbd4b9;
+}
 .update.hover {
-    background-color:#ffeeee;
+    background-color:#fbc299;
 }
 
 .update .thumb {
@@ -59,12 +81,15 @@ Multiplayful
     height:80px;
     width:80px; 
 }
-.update .contents {
+.update .contents, .update .outer_contents {
     width:410px;
+    float:left;
 }
 .update .contents img {
     height:50px;
     width:50px; 
+    padding:1px;
+    border:1px solid #d9d9d9; 
 }
 
 .update h3 {
@@ -97,10 +122,13 @@ Multiplayful
     margin-right:4px;
 }
 
+.title_inlines { 
+    float:left;
+}
 .title_inline {
+    margin:2px 0;
     float:left;
     clear:both;
-    margin:2px 0;
 }
 
 {% endblock %}
@@ -126,6 +154,7 @@ Multiplayful
     });
 
     function reset_ajax() {
+        $(".update a, .info .title_inline a").unbind("click");
         $(".update a, .info .title_inline a").click( function (event) {
 
             var url = $(this).attr("href");
@@ -170,6 +199,9 @@ Multiplayful
     $(function() { 
 
         $(".update").click( function (event) {
+            $(".update").removeClass("selected");
+            $(this).addClass("selected");
+
             $.get("/blurb/" + $(this).attr("name") + "/",
                 function(data) {
                     $(".info").html(data);
@@ -188,6 +220,10 @@ Multiplayful
         $('.update').mouseleave( function (event) {
             $(this).removeClass("hover");
         });
+
+        // auto-select the first post
+        // TODO: avoid doing this on direct link to elsewhere
+        $('.update').first().click();
     });
 
 </script>

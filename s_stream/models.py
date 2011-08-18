@@ -1,5 +1,8 @@
 from django.db import models 
 from django.contrib import admin
+from django.shortcuts import render_to_response
+from django.template import Context
+from django.template.loader import get_template
 
 from s_media.models import Image
 from s_users.models import UserProfile
@@ -47,16 +50,11 @@ class Update(models.Model):
 
     def title_html(self):
 
+        trunc_title = self.title
+        if len(trunc_title) > 50:
+            trunc_title = "%s..." % trunc_title[:27]
 
-        if not self.project:
-
-            title_html = "<a href='/blurb/%s/'>%s</a>" % (self.id, self.title)
-
-        else: 
-            title_html = "<a href='/project/%s/'>%s</a> - <a href='/blurb/%s/'>%s</a>" % (self.project.id,
-                        self.project.title,
-                        self.id,
-                        self.title)
+        title_html = "<a href='/blurb/%s/'>%s</a>" % (self.id, trunc_title)
 
         return title_html
 
@@ -75,12 +73,16 @@ class Update(models.Model):
 
         title_html = self.title_html()
 
+        inline_template = get_template("update_attribution_inlines.html")
 
         return """<div class='update %s' id='%s' name='%s'>
     <a><img src='%s' class='thumb' /></a>
-    <div class='contents'>
+    <div class='outer_contents'>
         <h4 class='blurb_title'>%s</h4>
-        <p>%s</p>
+        %s
+        <div class='contents'>
+            <p>%s</p>
+        </div>
     </div> 
 </div>
     """ % (update_class,
@@ -88,6 +90,7 @@ class Update(models.Model):
             self.id,
             self.thumbnail, 
             title_html, 
+            inline_template.render(Context({ 'update': self })),
             self.content) 
 
 

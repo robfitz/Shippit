@@ -11,7 +11,7 @@ urlpatterns = patterns('',
 
     ('^project/(?P<project_id>[0-9]*)/$', 's_projects.views.project_info'),
     ('^blurb/(?P<update_id>[0-9]*)/$', 's_stream.views.update_info'),
-    ('^user/(?P<username>[-_ !@\'a-zA-Z0-9]*)/$', 's_stream.views.update_info'),
+    ('^user/(?P<username>[-_ !@\'a-zA-Z0-9]*)/$', 's_users.views.user_info'),
 
 
     ('^subscribe/(?P<subscription_title>[a-zA-Z ]*)/$', 's_broadcast.views.subscribe'),

@@ -2,13 +2,7 @@
 
 <p>
 
-    {% if update.author %}
-        {% include 'user_inline.html' with user=update.author.user %}
-    {% endif %}
-
-    {% if update.project %} 
-        {% include 'project_title_inline.html' with project=update.project %} 
-    {% endif %}
+    {% include 'update_attribution_inlines.html' %}
 
 </p>
 

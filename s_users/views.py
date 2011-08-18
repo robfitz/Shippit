@@ -1,16 +1,19 @@
 import logging
 from datetime import datetime
 
-from settings import VERSION
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 
 from django.contrib.auth.models import User
-from django.contrib import auth
+from django.contrib import auth 
 
-from d_game.models import Match
-from d_metrics.models import UserMetrics
+
+def user_info(request, username):
+
+    user = get_object_or_404(User, username=username)
+
+    return render_to_response("profile.html", locals())
 
 
 def register(request):

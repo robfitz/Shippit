@@ -16,12 +16,7 @@ li {
     visible:none;
     display:none;
 }
-.header h1, .header h1 a {
-    font-size:36px;
-    float:left;
-    text-decoration:none;
-    color: #191919!important;
-}
+
 h3 {
     font-size:18px;
     margin-bottom:10px;
@@ -70,13 +65,13 @@ body {
     text-align: center;
     padding: 0px;
     color: #191919;
-    background: #F2F2F2 url(bg.jpg) repeat-x top;
+    // background: #F2F2F2 url(/media/bg.jpg) repeat-x top;
 }
 div#body {
     text-align: left;
     padding: 0px;
     margin: 0 auto;
-    width:980px;
+    width:920px;
 }
 div .body_section {
     width:900px;
@@ -91,7 +86,6 @@ a:link {
     -webkit-tap-highlight-color: #FF5E99;
 }
 #nav {
-    margin-top:10px;
 }
 #nav a, #nav a:visited {
     color: #1A1A1A;
@@ -128,7 +122,6 @@ Pseudo ::selection element
  * navbar
  * ******/
 #nav {
-    float:right;
     padding-bottom:10px;
 }
 
@@ -155,7 +148,7 @@ Pseudo ::selection element
     border-left: solid 1px #CCC;
     border-right: 1px solid #E0E0E0;
     border-bottom: 1px solid #E0E0E0;
-    padding: 7px 11px 8px;
+    padding: 3px 11px 8px;
     text-shadow: 0 1px 0 white;
 }
 
@@ -163,7 +156,7 @@ Pseudo ::selection element
     font-weight: bold;
     text-decoration: none;
     display: block;
-    padding: 8px 12px;
+    padding: 4px 12px;
     font-size: 113%;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
@@ -330,7 +323,7 @@ h2 {
 h1, h2, h3, h4, h5, h6 {
     font-weight: bold;
     text-rendering: optimizeLegibility;
-    color:#191919!important;
+    color:#191919;
 }
 .plain, .plain:visited {
     text-decoration:none;
@@ -381,11 +374,6 @@ h1, h2, h3, h4, h5, h6 {
 .video_info p {
     margin:5px 0;
 }
-.header {
-    padding:20px 0 10px 0;
-    float:left;
-    width:100%;
-}
 
 #video {
     float:left;
@@ -397,16 +385,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .footer {
-    margin-top:20px;
-    margin-bottom:20px;
     float:left;
     width:100%;
-}
-
-
-
-
-
+    padding:10px 0;
+} 
 
 button.blue, .button.blue {
     background: url("grad-blue.gif") repeat-x center top #166890;
@@ -617,3 +599,10 @@ img.learn_more {
     float:left;
 }
 
+
+.medium {
+    font-size:12px;
+}
+.white {
+    color:#fff;
+}

@@ -20,6 +20,10 @@
 
         <style> 
 
+            body {
+                background-color:#fec34d;
+            }
+
             .closable {
                 position:relative;
             }
@@ -31,20 +35,86 @@
             }
             
             .content {
-                background-color:#fff;
+                background-color:#f9f9f9;
                 padding:0 0; 
                 width:920px; 
+                margin-top:50px;
             }
 
             .input {
                 height:36px;
                 width:280px;
                 font-size:24px;
+            }
+            .stream_alert, .stream_alert h3 {
                 color: #535353;
             }
             label {
                 font-size:24px;
                 color: #535353;
+            }
+
+
+            /** header stuff */
+            .header {
+                position:fixed;
+                top:0;
+                left:0;
+                background-color:#191919; 
+                color:#fec34d;
+                // color:#fff;
+                width:100%;
+                height:40px;
+                padding:0;
+                z-index:10000;
+            }
+            .light {
+                color:#fec34d;
+                // color:#fff;
+            }
+            .header_body { 
+                margin: 0 auto;
+                width:920px;
+            }
+            .header_content {
+                width:920px;
+                float:left;
+            }
+
+
+            .header h1 {
+                font-size:16px;
+                float:left;
+                margin:10px 20px 10px 0;
+            } 
+            h1 a, h1 a:visited {
+                text-decoration:none;
+                color:#fec34d;
+                // color:#fff;
+                // color: #e55300;
+            }
+            .header ul {
+                height:40px;
+                list-style-type:none;
+                float:left;
+            }
+            .header li {
+                height:40px;
+                float:left;
+                display:list-item;
+                margin:0;
+            } 
+            .header li a, .header li a:visited, .header_link, .header_link:visited {
+                height:20px;
+                padding:10px 10px;
+                color:#fec34d;
+                // color:#fff;
+                display:block;
+                text-decoration:none;
+                margin:0;
+            } 
+            .header a:hover, .header li a:hover {
+                color:#fff;
             }
 
             {% block style %}
@@ -122,26 +192,33 @@
 
 	</div>
 
-        <div id="body">
-
             {% block header %}
 
                 <div class="header">
+                    <div class="header_body">
+                        <div class="header_content">
 
-                    <h1><a href="/">{% block header_title %}block header_title{% endblock %}</a></h1>
+                            <h1><a href="/">{% block header_title %}block header_title{% endblock %} </a></h1>
 
-                    <ul id="nav">
-                        <li>
-                            <a href="/">Navigation</a>
                             <ul>
-                                <li><a>Choice</a></li>
-                                <li><a>Choice</a></li>
+                                <li><a href=".">one</a>
+                                <li><a href=".">two</a>
+                                <li><a href=".">three</a>
                             </ul>
-                        </li>
-                    </ul>
+
+                            {% if request.user.is_authenticated %}
+                                <a href="/admin/logout/" class="fr header_link">Log out</a>
+                                <a href="/admin/" class="fr header_link">Admin</a>
+                            {% endif %}
+                        </div>
+
+                    </div>
+
                 </div>
 
             {% endblock header %}
+
+        <div id="body">
 
             <div class="border rounded fl content" style="">
                 {% block content %}
@@ -153,11 +230,9 @@
                 {% block footer %}
                 {% endblock %}
 
-                <p class="fl">
                     <a class="home" href="/about/" style="margin-right:30px;">About</a>
                     <a class="home" href="/terms/" style="margin-right:30px;">Legal &amp; terms</a>
                     <a class="home" href="/contact/" style="margin-right:30px;">Contact &amp; feedback</a>
-                </p>
             </div>
 
         </div>

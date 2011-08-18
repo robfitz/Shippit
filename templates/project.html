@@ -1,9 +1,12 @@
-<h2>{{ project.title }}</h2>
+<div style="float:left;width:100%;">
 
-<h3>Status</h3>
-<p>
-{{ project.status }}
-</p>
+    <img class='info_thumb' src="{{ project.thumbnail|default:'/media/default_project.png' }}" />
+
+    <h2>{{ project.title }}</h2>
+
+    {{ project.status }}
+
+</div>
 
 
 <div class='post_contents' >

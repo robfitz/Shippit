@@ -1,0 +1,34 @@
+<div style="float:left;width:100%;">
+
+    <img class='info_thumb' src="{{ user.thumbnail|default:'/media/default_user.png' }}" />
+
+    <h2>{{ user.username }}</h2>
+
+    <p>
+    <span class="medium">Member for {{ user.get_profile.signup_date|timesince }}</span> 
+    </p>
+
+    <p>
+    [tag] [tag]
+    <p>
+</div>
+
+<h3>Projects</h3>
+
+<p>
+<ul>
+    <li>one
+    <li>two
+    <li>three
+</ul>
+</p>
+
+<h3>Blurbs</h3>
+
+<p>
+<ul>
+    <li>one
+    <li>two
+    <li>three
+</ul> 
+</p>
