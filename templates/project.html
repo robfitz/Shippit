@@ -1,0 +1,40 @@
+<h2>{{ project.title }}</h2>
+
+<h3>Status</h3>
+<p>
+{{ project.status }}
+</p>
+
+
+<div class='post_contents' >
+
+    <h3>Pitch</h3>
+    <p>
+    {{ project.pitch }}
+    </p>
+
+
+    <h3>Development media</h3>
+
+    {% for img in project.screenshots %}
+        <a><img class='screenshot' src="{{ img.url }}" /></a>
+    {% endfor %}
+
+
+    <h3>Updates</h3>
+
+    <ul>
+    {% for update in project.updates %}
+        <li>{{ update.title_html|safe }} 
+    {% endfor %}
+    </ul>
+
+    <script>
+        $(function() {
+            $(".post_contents img").wrap(function() {
+                return "<a href='" + $(this).attr('src') + "' class='lightbox' />";
+                }); 
+        });
+    </script>
+
+</div>

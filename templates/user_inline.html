@@ -1,0 +1,13 @@
+<div class='title_inline'>
+
+    <div style='float:left;width:20px;'>by</div>
+
+    <a href='/user/{{ user.username }}/'>
+        <img src='{{ user.get_profile.thumbnail|default:"/media/default_user.png" }}' class='thumb_inline' />
+    </a>
+
+    <a href='/user/{{ user.username }}/'>{{ user.username }}</a>
+
+    [tag] [tag]
+
+</div>

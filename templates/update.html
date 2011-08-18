@@ -1,0 +1,28 @@
+<h2>{{ update.title }}</h2>
+
+<p>
+
+    {% if update.author %}
+        {% include 'user_inline.html' with user=update.author.user %}
+    {% endif %}
+
+    {% if update.project %} 
+        {% include 'project_title_inline.html' with project=update.project %} 
+    {% endif %}
+
+</p>
+
+<div class='post_contents' >
+<p>
+    {{ update.content|safe }} 
+</p>
+
+<script>
+    $(function() {
+        $(".post_contents img").wrap(function() {
+            return "<a href='" + $(this).attr('src') + "' class='lightbox' />";
+            }); 
+    });
+</script>
+</div>
+

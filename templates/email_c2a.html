@@ -1,0 +1,37 @@
+<div class='stream_alert closable'>
+    
+    <h3>Wut?</h3>
+
+    <p>
+    You can use a page like this as your development log (for free). Drop your email in the box to get in on the private alpha and stay in the loop about future developments.
+    </p>
+
+    <form method="POST" id="newsletter" action='/subscribe/newsletter/'>
+
+        {% csrf_token %}
+
+        <label for="email_id">Email </label>
+        <input id="email_id" name="email" class='input' />
+        <input type="submit" class="button blue" value="Sign me up!" />
+    </form>
+
+    <script>
+        $(function() {
+            $("#newsletter").submit(function(event) {
+                alert("posting via function");
+                $.post("/subscribe/newsletter/",
+                    $("#newsletter").serialize(),
+                    function(data) { 
+                        if (data == "ok") {
+                            $(".stream_alert").slideUp(); 
+                        }
+                        else {
+                            alert("Your email submission didn't go through. Maybe check for typos or try again in a bit? Thanks!");
+                        }
+                    });
+                return false;
+            }); 
+        });
+    </script>
+
+</div>

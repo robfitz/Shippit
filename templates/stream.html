@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+
+<script src="http://scripts.embed.ly/jquery.embedly.min.js"></script>
+
+{% endblock %}
+
+{% block header_title %}
+Multiplayful
+{% endblock %}
+
+{% block style %}
+
+.left_col {
+    width:540px;
+    float:left;
+}
+.stream {
+    width:549;
+    float:left;
+    background-color:#fff;
+    margin:4px 0 -4px -10px;
+} 
+
+.info {
+    width:340px;
+    float:left;
+    padding:12px 20px;
+}
+    
+.stream_alert { 
+    width:480px;
+    margin:10px 0 -5px 10px;
+    padding:10px 20px;
+    display:block;
+    background-color:#efefef;
+    border:1px solid #cccccc;
+}
+
+.update {
+    width:500px;
+    height:100px;
+    padding:10px 20px;
+    border-top:1px solid #d9d9d9;
+    margin-top:-1px;
+}
+.stream:first-child {
+    border-top:0px solid white;
+}
+
+.update.hover {
+    background-color:#ffeeee;
+}
+
+.update .thumb {
+    float:left;
+    margin-right:10px;
+    height:80px;
+    width:80px; 
+}
+.update .contents {
+    width:410px;
+}
+.update .contents img {
+    height:50px;
+    width:50px; 
+}
+
+.update h3 {
+}
+
+.update p {
+}
+
+.update_contents {
+    float:left;
+}
+
+.info .screenshot, .info .post_contents img {
+    width:96px;
+    height:96px;
+    margin:5px 5px; 
+    border:1px solid #d9d9d9;
+    padding:1px; 
+}
+
+.info .post_contents {
+    float:left;
+    clear:both; 
+}
+
+.thumb_inline {
+    width:22px;
+    height:20px;
+    float:left;
+    margin-right:4px;
+}
+
+.title_inline {
+    float:left;
+    clear:both;
+    margin:2px 0;
+}
+
+{% endblock %}
+
+
+
+{% block content %}
+
+<div class='left_col'>
+
+    {% include 'email_c2a.html' %}
+
+    <div class='stream border rounded'> 
+
+        {{ updates_html|safe }} 
+
+    </div>
+</div>
+
+<script>
+    $(window).load(function(){
+        reset_ajax();
+    });
+
+    function reset_ajax() {
+        $(".update a, .info .title_inline a").click( function (event) {
+
+            var url = $(this).attr("href");
+            var url_start = url.substring(0, 3);
+            if (url_start == "www" || url_start == "htt") {
+                // don't ajax if it's external
+                return true;
+            }
+            else if (url.split(".").length > 1) {
+                // don't ajax if it has a file extension
+                return true;
+            }
+
+            $.get(url,
+                function(data) {
+                    $(".info").html(data);
+                    reset_ajax();
+                }
+            ); 
+
+            return false;
+        }); 
+
+        $(".update a.lightbox").children().unwrap();
+
+        $(".update").each(function() {
+
+            
+            $(this).find(".contents img").wrap(function() {
+                return "<a href='" + $(this).attr('src') + "' class='lightbox' />";
+            }); 
+
+            $(this).find(".lightbox").lightBox();
+        });
+
+        $('.info .lightbox').lightBox();
+
+
+    }
+
+
+    $(function() { 
+
+        $(".update").click( function (event) {
+            $.get("/blurb/" + $(this).attr("name") + "/",
+                function(data) {
+                    $(".info").html(data);
+                    reset_ajax();
+                }
+            ); 
+        });
+
+        $('.update').embedly({key:'d3f9f6e8c7ee11e0b9a74040d3dc5c07'});
+
+        // highlight effects
+        $('.update').mouseenter( function (event) {
+            $('.update').removeClass("hover");
+            $(this).addClass("hover");
+        });
+        $('.update').mouseleave( function (event) {
+            $(this).removeClass("hover");
+        });
+    });
+
+</script>
+
+<div class='info'> 
+</div>
+
+{% endblock content %}
