@@ -14,10 +14,10 @@ class Update(models.Model):
     TYPES = (
             # personal
             ("blog", "Blog"), 
-            ("elevator pitch", "Elevator pitch"),
+            ("pitch", "Elevator pitch"),
 
             # development work 
-            ("project started", "New project started"), 
+            ("started", "New project started"), 
             ("screenshots", "New screenshots"),
             ("video", "New video"),
             ("milestone", "Development milestone"),
@@ -76,6 +76,9 @@ class Update(models.Model):
         inline_template = get_template("update_attribution_inlines.html")
 
         return """<div class='update %s' id='%s' name='%s'>
+    <div class='endcap %s'>
+        <img class='%s' src='/media/ui/blurb-%s.png' />
+    </div>
     <a><img src='%s' class='thumb' /></a>
     <div class='outer_contents'>
         <h4 class='blurb_title'>%s</h4>
@@ -88,6 +91,9 @@ class Update(models.Model):
     """ % (update_class,
             update_id, 
             self.id,
+            self.type, #endcap class
+            self.type, #img class
+            self.type, #img url
             self.thumbnail, 
             title_html, 
             inline_template.render(Context({ 'update': self })),

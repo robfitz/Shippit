@@ -55,12 +55,38 @@ Multiplayful
 }
 
 .update {
-    width:500px;
-    padding:10px 20px;
+    width:540px;
     border-top:1px solid #d9d9d9;
     margin-top:-1px;
     float:left;
+    position:relative;
 }
+.update .endcap {
+    height: 100%;
+    width:20px;
+    position:absolute;
+    bottom:0;
+    background-color:#000;
+}
+
+.endcap.blog {
+    background-color:#003bae;
+}
+.endcap.pitch {
+    background-color:#ff2b00;
+}
+
+.endcap.screenshots { 
+    background-color:#15ab00;
+}
+.endcap.video {
+    background-color:#15ab00;
+}
+
+.update .endcap img {
+    margin-top:10px;
+}
+
 .update p {
     margin:4px 0;
 }
@@ -77,7 +103,7 @@ Multiplayful
 
 .update .thumb {
     float:left;
-    margin-right:10px;
+    margin:10px 10px 10px 30px;
     height:80px;
     width:80px; 
 }
