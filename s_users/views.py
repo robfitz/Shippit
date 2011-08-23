@@ -9,13 +9,54 @@ from django.contrib.auth.models import User
 
 from s_broadcast.models import Subscription
 from s_users.models import InviteCode
+from s_media.models import Image
 
 
 def user_info(request, username):
 
     user = get_object_or_404(User, username=username)
 
-    return render_to_response("profile.html", locals())
+    if request.method == "POST":
+        if request.user != user and not request.user.is_staff:
+            return HttpResponse("error: no user edit permissions")
+
+        user.username = request.POST.get("username")
+        user.save()
+
+        user.get_profile().about = request.POST.get("about")
+        user.get_profile().save()
+
+        thumb_data = request.FILES.get("thumbnail")
+        if thumb_data:
+            thumbnail = user.get_profile().thumbnail
+            if not thumbnail: 
+                thumbnail = Image()
+            thumbnail.data = thumb_data
+            thumbnail.save() 
+
+            user.get_profile().thumbnail = thumbnail
+            user.get_profile().save() 
+
+        return HttpResponseRedirect("/user/%s/" % user.username)
+
+    is_edit = request.GET.get("edit", False)
+    if request.user != user and not request.user.is_staff:
+        is_edit = False
+
+    if not request.is_ajax():
+
+        url = '/user/%s/' % user.username
+        if is_edit:
+            url = "%s?edit=t" % url
+        request.session['info_ajax_url'] = url
+
+        return HttpResponseRedirect("/")
+
+    if is_edit:
+        return render_to_response("profile_edit.html", locals(), context_instance=RequestContext(request))
+
+    else:
+        return render_to_response("profile.html", locals())
 
 
 def register(request):

@@ -1,0 +1,34 @@
+{% extends 'profile.html' %}
+
+{% block before_info %}
+
+    <form enctype="multipart/form-data" id='form' method="post" action='/user/{{ user.username }}/'>
+        {% csrf_token %}
+
+        <input type="hidden" value="{{ project.id }}" name="project" /> 
+    
+{% endblock %}
+
+{% block thumb %}
+
+    {{ block.super }}
+
+    <input name="thumbnail" id="thumbnail_upload" type="file" />
+
+{% endblock %}
+
+{% block title %}
+
+    <input class='input edit_username' value="{{ user.username }}" id="username_id" name="username" />
+
+{% endblock %}
+
+{% block about %} 
+    <textarea id="about_id" name="about">{{ user.get_profile.about }}</textarea>
+
+    <input type="submit" class="button blue" value="Save changes" />
+{% endblock %}
+
+{% block after_info %}
+    </form>
+{% endblock %}

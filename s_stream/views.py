@@ -7,6 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.cache import cache
 
 from s_stream.models import Update
+from s_media.models import Image
 
 
 def stream(request):
@@ -24,11 +25,12 @@ def stream(request):
 
 
     unconfirmed_updates_html = ""
-    updates_html = cache.get("updates_html", "")
+    # updates_html = cache.get("updates_html", "")
+    updates_html = ""
 
     if request.user.is_authenticated():
-        for unconfirmed in Update.objects.filter(is_published=False, author=request.user.get_profile()):
-            unconfirmed_updates_html = """%s %s""" % (update.to_html(), unconfirmed_updates_html) 
+        for unconfirmed in Update.objects.filter(is_published=False, author=request.user):
+            unconfirmed_updates_html = """%s %s""" % (unconfirmed.to_html(), unconfirmed_updates_html) 
 
     if not updates_html: 
         updates = Update.objects.all()[:50]
@@ -55,7 +57,7 @@ def publish_unconfirmed(request, update_id):
     
         if update.is_published:
             return HttpResponse("error: update %s has already been confirmed" % update_id)
-        elif (not request.user.is_authenticated()) or update.author.user != request.user:
+        elif (not request.user.is_authenticated()) or update.author != request.user:
             return HttpResponse("error: no permissions")
         else:
             update.is_published = True
@@ -71,7 +73,7 @@ def discard_unconfirmed(request, update_id):
     
         if update.is_published:
             return HttpResponse("error: update %s has already been confirmed" % update_id)
-        elif (not request.user.is_authenticated()) or update.author.user != request.user:
+        elif (not request.user.is_authenticated()) or update.author != request.user:
             return HttpResponse("error: no permissions")
         else:
             update.delete()
@@ -84,7 +86,47 @@ def discard_unconfirmed(request, update_id):
 
 def update_info(request, update_id):
 
-    update = get_object_or_404(Update, id=update_id)
+    if request.method == "POST":
+
+        if not request.user.is_authenticated():
+            return HttpResponse("error: must be logged in to edit")
+
+        try:
+            update = Update.objects.get(id=update_id)
+            if (not request.user.is_staff) and update.author != request.user:
+                return HttpResponse("error: no edit permissions, must be author or staff") 
+            
+        except:
+            update = Update(type="blog",
+                    author=request.user)
+
+        update.title = request.POST.get("title")
+        update.content = request.POST.get("content")
+        update.save()
+
+        if request.FILES.get("thumbnail"):
+            if not update.thumbnail: 
+                thumbnail = Image()
+            else:
+                thumbnail = update.thumbnail
+
+            thumbnail.data = request.FILES.get("thumbnail")
+            thumbnail.save() 
+
+            update.thumbnail = thumbnail
+            update.save()
+
+            logging.info("$$$ saved update thumbnail: %s" % update.thumbnail.id)
+        else:
+            logging.info("$$$ no request.FILES.get('thumbnail') :(")
+            for f in request.FILES:
+                logging.info("$$$$$ %s" % f)
+
+        logging.info("$$$ saved update: %s" % update.id)
+
+        return HttpResponseRedirect("/")
+
+    update = get_object_or_404(Update, id=update_id) 
 
     if update.type == "new project" or update.type == "pitch":
 

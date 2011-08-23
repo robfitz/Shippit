@@ -2,7 +2,7 @@
 
 {% block before_info %}
 
-    <form enctype="multipart/form-data" id='form' method="post" action='/blurb/{{ project.id }}/'>
+    <form enctype="multipart/form-data" id='form' method="post" action='/blurb/{{ update.id }}/'>
         {% csrf_token %}
 
         <input type="hidden" value="{{ update.id }}" name="update" /> 
@@ -20,7 +20,7 @@
 
 {% block title %}
 
-    <input class='input edit_title' value="{% if update.title %}{{ update.title }}{% else %}Untitled thoughts{% endif %}" id="title_id" name="title" />
+<input class='input edit_title' value="{{ update.title }}" id="title_id" name="title" />
 
 {% endblock %}
 
@@ -30,4 +30,8 @@
 
     <input type="submit" class="button blue" value="Publish" />
 
+{% endblock %}
+
+{% block after_info %}
+    </form>
 {% endblock %}

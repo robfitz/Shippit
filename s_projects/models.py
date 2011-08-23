@@ -3,7 +3,8 @@ from django.contrib import admin
 
 from django.db import models
 from djangotoolbox.fields import ListField 
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save
+from django.core.cache import cache
 
 from s_media.models import Image, Video
 
@@ -116,6 +117,13 @@ def str_to_array(str):
     return arr
 
 
+def save_project(sender, instance, created, **kwargs):
+
+    for update_id in instance.update_ids:
+        cache.delete("update_html_%s" % update_id)
+
+
 pre_save.connect(clean_listfields, sender=Project)
+post_save.connect(save_project, sender=Project)
 
 admin.site.register(Project)

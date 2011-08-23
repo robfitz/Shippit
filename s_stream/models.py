@@ -9,8 +9,8 @@ from django.template.loader import get_template
 from django.db.models.signals import post_save
 from django.core.cache import cache
 
+from django.contrib.auth.models import User
 from s_media.models import Image
-from s_users.models import UserProfile
 from s_projects.models import Project
 
 
@@ -38,7 +38,7 @@ class Update(models.Model):
 
     thumbnail = models.ForeignKey(Image, null=True, blank=True)
 
-    author = models.ForeignKey(UserProfile)
+    author = models.ForeignKey(User)
 
     project = models.ForeignKey(Project, blank=True, null=True)
 
@@ -59,8 +59,8 @@ class Update(models.Model):
                 return '/media/default_project.png'
 
         elif self.author:
-            if self.author.thumbnail:
-                return self.author.thumbnail
+            if self.author.get_profile().thumbnail:
+                return self.author.get_profile().thumbnail
             else: 
                 return '/media/default_user.png'
 
@@ -74,7 +74,7 @@ class Update(models.Model):
                 self.project,
                 self.title,
                 self.type,
-                self.author)
+                self.author.username)
 
 
     def title_html(self):
@@ -97,7 +97,7 @@ class Update(models.Model):
         if not self.project:
             # personal updates w/ no project
             update_class = 'user'
-            update_id = self.author.user.username 
+            update_id = self.author.username 
 
         else:
             update_class = 'project'
@@ -145,10 +145,12 @@ def create_update(sender, instance, created, **kwargs):
 
         if instance.author:
             # attach update to the user responsible for publishing this 
-            instance.author.update_ids.append(instance.id)
-            instance.author.save()
+            instance.author.get_profile().update_ids.append(instance.id)
+            instance.author.get_profile().save()
 
-
+    else:
+        # object has changed, cache is dirty
+        cache.delete("update_html_%s" % instance.id)
 
 
 post_save.connect(create_update, sender=Update)

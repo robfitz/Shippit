@@ -31,10 +31,14 @@ def project_info(request, project_id=None):
 
         thumb_data = request.FILES.get("thumbnail")
         if thumb_data:
-            if not project.thumbnail: 
-                project.thumbnail = Image()
-            project.thumbnail.data = thumb_data
-            project.thumbnail.save() 
+            thumbnail = project.thumbnail
+            if not thumbnail: 
+                thumbnail = Image()
+            thumbnail.data = thumb_data
+            thumbnail.save() 
+
+            project.thumbnail = thumbnail
+            project.save()
             
         logging.info("__*__ bout to check request.files: %s" % request.FILES)
         for f in request.FILES:
@@ -56,7 +60,7 @@ def project_info(request, project_id=None):
             # create a 'new project' update
             update = Update(type="new project",
                     title="Introducing %s - %s" % (project.title, project.status),
-                    author=request.user.get_profile(),
+                    author=request.user,
                     project=project,
                     content=project.pitch[:140],
                     is_published=False)
@@ -97,7 +101,7 @@ def project_info(request, project_id=None):
     else:
         url = '/project/%s/' % project_id
         if is_edit:
-            url = "%s%s" % (url, "?edit=t")
+            url = "%s?edit=t" % url
         request.session['info_ajax_url'] = url
 
         return HttpResponseRedirect("/")

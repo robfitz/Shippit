@@ -1,24 +1,53 @@
 <a href="javascript:void(0);" onclick="home()" class="info_home_button">Close X</a> 
 
-<div style="float:left;width:100%;">
+{% block before_info %} 
+{% endblock %}
 
-    <img class='info_thumb' src="{{ user.thumbnail|default:'/media/default_user.png' }}" />
+<div class="info_top">
 
+    <div class="info_thumb">
+    {% block thumb %} 
+
+        <img class='info_thumb' src="{{ user.get_profile.thumbnail }}" />
+
+    {% endblock thumb %}
+    </div>
+
+    {% block title %} 
     <h2>{{ user.username }}</h2>
+    {% endblock %}
 
     <p>
     <span class="medium">Member for {{ user.get_profile.signup_date|timesince }}</span> 
     </p>
 
     <p>
-    [tag] [tag]
+    <span class="tag">game design</span>, <span class="tag">coding</span>
     <p>
+
+    {% if request.user == user %}
+        <p>
+        <a class='ajax_link' href='/user/{{ user.username }}/?edit=t'>Edit</a>
+        </p>
+    {% endif %}
 </div>
 
-<div class="fl">
+<div class='post_contents' >
+
+    <h3>About</h3>
+
+    {% block about %}
+        {% if user.get_profile.about %} 
+            <p>
+                {{ user.get_profile.about }}
+            </p> 
+        {% else %} 
+            None yet 
+        {% endif %}
+    {% endblock %}
 
     {% if user.get_profile.owned_projects %}
-        <h3 class='fl'>Games I lead</h3>
+        <h3>Games I lead</h3>
 
         <ul class='mini_updates'>
             {% for project in user.get_profile.owned_projects reversed %}
@@ -27,7 +56,7 @@
         </ul>
     {% endif %}
 
-    <h3 class='fl'>Games I contribute to</h3>
+    <h3>Games I contribute to</h3>
 
     {% if user.get_profile.contributer_projects %} 
 
@@ -39,15 +68,24 @@
 
     {% else %}
 
-        None yet (<i>dun dun duuuuunnnnn</i>)
+        None yet
 
     {% endif %}
 
-    <h3 class='fl'>Updates</h3>
+    <h3>Updates</h3>
 
-    <ul class="mini_updates">
-    {% for update in user.get_profile.updates reversed %}
-    <li><span class="update_tag {{ update.type }}"><a class='ajax_link' href='/blurb/{{ update.id }}/'><img src="/media/ui/tag-{{ update.type }}.png" /></a></span>{{ update.title_html|safe }} 
-    {% endfor %}
-    </ul>
+    {% if user.get_profile.updates %}
+
+        <ul class="mini_updates">
+        {% for update in user.get_profile.updates reversed %}
+        <li><span class="update_tag {{ update.type }}"><a class='ajax_link' href='/blurb/{{ update.id }}/'><img src="/media/ui/tag-{{ update.type }}.png" /></a></span>{{ update.title_html|safe }} 
+        {% endfor %}
+        </ul>
+
+    {% else %}
+
+        None yet
+
+    {% endif %}
+
 </div>

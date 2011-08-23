@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
+from django.core.cache import cache
 
 from djangotoolbox.fields import ListField 
 
@@ -27,6 +28,8 @@ class UserProfile(models.Model):
     contributer_project_ids = ListField(models.PositiveIntegerField(), default=[]) 
 
     invite_appeal = models.TextField(blank=True, default="")
+
+    about = models.TextField(blank=True, default="")
 
     def __unicode__(self):
         return self.user.username
@@ -71,6 +74,9 @@ def create_user_profile(sender, instance, created, **kwargs):
         # extra info
         profile = UserProfile.objects.create(user=instance)
 
+    for update_id in instance.get_profile().update_ids:
+        cache.delete("update_html_%s" % update_id)
+        
 
 post_save.connect(create_user_profile, sender=User)
 
