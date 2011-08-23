@@ -1,0 +1,114 @@
+{% extends 'project.html' %}
+
+{% block before_info %}
+
+    <form enctype="multipart/form-data" id='form' method="post" action='/project/{{ project.id }}/'>
+        {% csrf_token %}
+
+        <input type="hidden" value="{{ project.id }}" name="project" /> 
+    
+{% endblock %}
+
+{% block thumb %}
+
+    {{ block.super }}
+
+    <input name="thumbnail" id="thumbnail_upload" type="file" />
+
+{% endblock %}
+
+{% block title %}
+
+    <input class='input edit_title' value="{% if project.title %}{{ project.title }}{% else %}Untitled project{% endif %}" id="title_id" name="title" />
+
+{% endblock %}
+
+{% block status %}
+    <p>
+    <label for="status_id">Status:</label>
+    <select name="status">
+        {% for status, name in statuses %}
+        <option value='{{ status }}' {%if status == project.status%}selected=true{%endif%}>{{ name }}</option>
+        {% endfor %} 
+    </select>
+    </p>
+
+    <input type="submit" class="button blue" value="Save changes" />
+
+{% endblock status %}
+
+{% block pitch %}
+    <textarea id="pitch_id" name="pitch">{{ project.pitch }}</textarea>
+
+    <input type="submit" class="button blue" value="Save changes" />
+
+{% endblock %}
+
+{% block launch_media %}
+    {% if project.launch_media %} 
+        {{ block.super }}
+    {% endif %}
+    <input name='launch_media' type="file" class='gallery' />
+{% endblock %}
+
+{% block development_media %}
+    {% if project.development_media %} 
+        {{ block.super }}
+    {% endif %}
+    <input name='development_media' type="file" class='gallery' />
+{% endblock %}
+
+{% block after_info %}
+    </form>
+
+    <script>
+
+        var uploads = 1;
+
+        // handle async gallery uploads
+        $("input.gallery").change( function ( event ) { 
+            // when an open file input is used, add another blank one
+            var new_upload = $(this).after($(this).clone(true).val(null)); 
+            new_upload.attr("name", new_upload.attr("name") + uploads);
+
+            uploads ++;
+
+            // prevent from adding yet another if changed again later
+            $(this).unbind("change");
+            var current_upload = $(this);
+
+            // add a little delete button to
+            var del_button = $("<a href='javascript:void(0);' class='medium'>Delete</a>").insertAfter($(this));
+            del_button.click(function(event) { 
+                current_upload.remove(); 
+                $(this).remove(); 
+            }); 
+        });
+    </script>
+
+    <script>
+        /**
+        $("#form").submit(function(event) {
+            $.post($(this).attr("action"),
+                $(this).serialize(),
+                function(data) {
+
+                    alert(data);
+
+                    var json = eval( '(' + data + ')' );
+
+                    alert(json['project']);
+                    alert(json.project);
+                    alert("project saved, id=" + json['update_html']);
+                    $("#form").attr("action", "/project/" + json['project'] + "/");
+                    $("input[name='project']").attr("value", json['project']); 
+
+                    $(".stream").prepend(json['update_html']);
+
+                }
+            );
+            return false;
+        });
+        */
+    </script>
+{% endblock %}

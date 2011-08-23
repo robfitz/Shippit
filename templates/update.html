@@ -1,15 +1,31 @@
-<h2>{{ update.title }}</h2>
+<div class="info_top">
+    <div class="info_thumb">
+        {% block thumb %} 
 
-<p>
+            <img class='info_thumb' src="{{ update.thumb }}" />
 
-    {% include 'update_attribution_inlines.html' %}
+        {% endblock thumb %}
+    </div>
 
-</p>
+    {% block title %}
+        <h2>{{ update.title }}</h2>
+    {% endblock %}
+
+    <p>
+
+        {% include 'update_attribution_inlines.html' %}
+
+    </p>
+
+</div>
 
 <div class='post_contents' >
-<p>
-    {{ update.content|safe }} 
-</p>
+    {% block content %}
+    <p>
+        {{ update.content|safe }} 
+    </p> 
+    {% endblock content %}
+</div>
 
 <script>
     $(function() {
@@ -18,5 +34,3 @@
             }); 
     });
 </script>
-</div>
-

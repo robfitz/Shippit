@@ -3,7 +3,7 @@
     <h3>What?</h3>
 
     <p>
-    You can use a page like this as your game development log (for free). Drop your email in the box to get in on the private alpha and stay in the loop about future work.
+    This is an open game development log. Right now it's kinda lonely here, so if you'd like to join in & share your work, drop your email for dibs on private beta invites.
     </p>
 
     <form method="POST" id="newsletter" action='/subscribe/newsletter/'>
@@ -12,13 +12,12 @@
 
         <label for="email_id">Email </label>
         <input id="email_id" name="email" class='input' />
-        <input type="submit" class="button" value="Sign me up!" />
+        <input type="submit" class="button" value="Beta please!" />
     </form>
 
     <script>
         $(function() {
             $("#newsletter").submit(function(event) {
-                alert("posting via function");
                 $.post("/subscribe/newsletter/",
                     $("#newsletter").serialize(),
                     function(data) { 

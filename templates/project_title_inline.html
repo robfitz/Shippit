@@ -1,13 +1,11 @@
 <div class='title_inline'>
 
-    <div style='float:left;width:20px;'>for</div>
-
     <a href='/project/{{ project.id }}/'>
         <img src='{{ project.thumbnail|default:"/media/default_project.png" }}' class='thumb_inline' />
     </a>
 
     <a href='/project/{{ project.id }}/'>{{ project.title }}</a>
 
-    [tag] [tag]
+    {% for tag in project.temp_tags %}{% if forloop.counter > 1 %}, {% endif %}<span class="tag">{{ tag }}</span>{% endfor %}
 
 </div>

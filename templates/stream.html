@@ -23,26 +23,54 @@ Multiplayful
     margin:4px 0 -4px -10px;
 } 
 
-.info {
+.info_outer {
     width:340px;
     float:left;
     padding:12px 20px;
     position:fixed;
     margin-left:540px; 
+    overflow:auto;
+    top:50px;
+    bottom:10px;
+}
+.post_contents {
+
 }
 .info p {
     margin:10px 0;
 }
-.info h3 {
+.info h2 {
     margin-top:10px;
 }
-.info_thumb {
+.info h3 {
+    margin-top:20px;
+}
+.info_top, .post_contents {
+    width:325px;
+}
+.info textarea {
+    width:320px;
+    height:200px;
+}
+.info .button {
+    float:right;
+    margin:0;
+}
+
+.info_thumb img {
     width:120px;
     height:120px;
     border:1px solid #d9d9d9;
     padding:1px;
+}
+.info_thumb {
     float:left;
     margin-right:10px;
+    width:122px; 
+}
+.edit_title {
+    margin-top:20px;
+    width:186px;
 }
     
 .stream_alert { 
@@ -69,17 +97,39 @@ Multiplayful
     background-color:#000;
 }
 
-.endcap.blog {
+.update_tag {
+    height:20px;
+    background-color:#000;
+    margin-right:6px;
+    float:left;
+    margin-top:-4px;
+    margin-bottom:4px;
+}
+
+ul.mini_updates {
+    list-style-type:none;
+    float:left;
+    clear:both;
+    width:100%;
+}
+ul.mini_updates li {
+    margin:1px 0;
+    float:left;
+    width:100%;
+}
+
+.endcap.blog, .update_tag.blog {
     background-color:#003bae;
 }
-.endcap.pitch {
+.endcap.pitch, .update_tag.pitch,
+.endcap.new-project, .update_tag.new-project { 
     background-color:#ff2b00;
 }
 
-.endcap.screenshots { 
+.endcap.screenshots, .update_tag.screenshots { 
     background-color:#15ab00;
 }
-.endcap.video {
+.endcap.video, .update_tag.video {
     background-color:#15ab00;
 }
 
@@ -95,10 +145,12 @@ Multiplayful
 }
 
 .update.selected {
-    background-color:#fbd4b9;
+    // background-color:#fbd4b9;
+    background-color:#ddd;
 }
 .update.hover {
-    background-color:#fbc299;
+    // background-color:#fbc299;
+    background-color:#ccc;
 }
 
 .update .thumb {
@@ -106,6 +158,9 @@ Multiplayful
     margin:10px 10px 10px 30px;
     height:80px;
     width:80px; 
+}
+.update .outer_contents {
+    padding:10px 0;
 }
 .update .contents, .update .outer_contents {
     width:410px;
@@ -131,7 +186,7 @@ Multiplayful
 .info .screenshot, .info .post_contents img {
     width:96px;
     height:96px;
-    margin:5px 5px; 
+    margin:2px;
     border:1px solid #d9d9d9;
     padding:1px; 
 }
@@ -154,12 +209,89 @@ Multiplayful
 .title_inline {
     margin:2px 0;
     float:left;
-    clear:both;
+}
+
+.unconfirmed_updates {
+    margin-top:60px;
+    width:540px;
+    padding:10px 10px 10px 10px;
+    background-color:#fff;
+    text-align:left;
+}
+
+.unconfirmed_controls {
+    margin-top:10px;
+    float:right;
+}
+.unconfirmed_controls * {
+    margin-left:20px;
+    margin-right:0;
 }
 
 {% endblock %}
 
+{% block jqmWindow %}
 
+    <div class='unconfirmed_updates border rounded fl'>
+
+        <h2>This update is about to be published</h2>
+
+        {{ unconfirmed_updates_html|safe }}
+
+        <div class="unconfirmed_controls">
+            <a href='javascript:void(0);' onclick='discard_unconfirmed_updates()'>Discard</a>
+            <!--
+            <a href='javascript:void(0);' class="button" onclick='edit_unconfirmed_updates()'>Edit</a>
+            -->
+            <a href='javascript:void(0);' class="button blue" onclick='publish_unconfirmed_updates()'>Okay</a>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block extra_popups %}
+    {% if show_no_invite_alert %}
+        <div class="jqmWindow hidden" id="no_invite_dialog" style="overflow:auto;">
+
+            <div class='unconfirmed_updates border rounded fl'>
+                <h2>You need an invitation to sign up</h2>
+                <p>
+                Multiplayful requires an invitation while we ensure the community and technology are up to snuff. If you'd like to get a quick message when an invite is available, just let us know what you're up to in the field below. Thanks!
+                </p>
+                <form action='/accounts/request_invite/' method='POST'>
+                    {% csrf_token %}
+                    <textarea name="appeal" style="width:100%;height:80px;"></textarea>
+
+                    <a href="javascript:void(0);" onclick="reject_invite()">I didn't want in anyway</a>
+                    <input type="submit" class="fr button blue" value="Request invite" />
+                </form>
+            </div> 
+        </div>
+
+        <script>
+            $(function() {
+                $("#no_invite_dialog").jqm({modal:true});
+                $("#no_invite_dialog").jqmShow();
+
+
+                $("#no_invite_dialog form").submit( function ( event ) { 
+                    $("#no_invite_dialog").jqmHide(); 
+                    $.post( $(this).attr("action"),
+                        $(this).serialize(),
+                        function () { alert("appelaed"); });
+                    return false;
+                });
+            });
+
+            function reject_invite() {
+                $.get("/accounts/reject_invite/");
+                $("#no_invite_dialog").jqmHide();
+
+            }
+        </script>
+    {% endif %}
+{% endblock %}
 
 {% block content %}
 
@@ -172,16 +304,50 @@ Multiplayful
         {{ updates_html|safe }} 
 
     </div>
+
 </div>
 
 <script>
+
+    /**
+    function edit_unconfirmed_updates() { 
+    }
+    */
+
+    function discard_unconfirmed_updates() {
+        $(".unconfirmed_updates .update").each( function () { 
+            $.get("/blurb/discard/" + $(this).attr("name") + "/"); 
+        });
+
+        $("#dialog").jqmHide();
+    }
+
+    function publish_unconfirmed_updates() {
+        $(".unconfirmed_updates .update").each( function () { 
+            $.get("/blurb/publish/" + $(this).attr("name") + "/"); 
+        });
+
+        var new_updates = $(".unconfirmed_updates .update").detach().hide(); 
+        $(".stream").prepend(new_updates); 
+        new_updates.slideDown();
+
+        $("#dialog").jqmHide();
+    }
+
     $(window).load(function(){
         reset_ajax();
     });
 
+    $(function() { 
+        {% if unconfirmed_updates_html %}
+            $("#dialog").jqm({modal:true});
+            $("#dialog").jqmShow();
+        {% endif %}
+    });
+
     function reset_ajax() {
-        $(".update a, .info .title_inline a").unbind("click");
-        $(".update a, .info .title_inline a").click( function (event) {
+        $(".update a, .info .title_inline a, .ajax_link").unbind("click");
+        $(".update a, .info .title_inline a, .ajax_link").click( function (event) {
 
             var url = $(this).attr("href");
             var url_start = url.substring(0, 3);
@@ -236,7 +402,6 @@ Multiplayful
             ); 
         });
 
-        $('.update').embedly({key:'d3f9f6e8c7ee11e0b9a74040d3dc5c07'});
 
         // highlight effects
         $('.update').mouseenter( function (event) {
@@ -247,14 +412,42 @@ Multiplayful
             $(this).removeClass("hover");
         });
 
+        {% if info_ajax_url %}
+            $.ajax({
+                url: "{{ info_ajax_url }}", 
+                    success: function(data) {
+                        $(".info").html(data);
+                        reset_ajax();
+                    },
+                });
+
+                /**
+            $.get("{{ info_ajax_url }}",
+                function(data) {
+                    $(".info").html(data);
+                    reset_ajax();
+                }
+            ); 
+            */
+        {% else %}
+            home();
+        {% endif %}
+
+        // do last in case it doesn't load
+        $('.update').embedly({key:'d3f9f6e8c7ee11e0b9a74040d3dc5c07'});
+    });
+
+    function home() {
         // auto-select the first post
         // TODO: avoid doing this on direct link to elsewhere
         $('.update').first().click();
-    });
+    }
 
 </script>
 
-<div class='info'> 
+<div class='info_outer'>
+    <div class='info'> 
+    </div>
 </div>
 
 {% endblock content %}

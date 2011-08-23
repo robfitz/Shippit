@@ -1,9 +1,16 @@
 <div class='title_inlines'>
+
     {% if update.author %}
-        {% include 'user_inline.html' with user=update.author.user %}
+        <div style='float:left;'>
+            <div style='float:left;width:20px;margin-top:2px'>by</div>
+            {% include 'user_inline.html' with user=update.author.user %}
+        </div>
     {% endif %}
 
     {% if update.project %} 
-        {% include 'project_title_inline.html' with project=update.project %} 
+        <div style='float:left;'>
+            <div style='float:left;width:20px;margin-top:2px;'>for</div>
+            {% include 'project_title_inline.html' with project=update.project %} 
+        </div>
     {% endif %}
 </div>

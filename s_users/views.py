@@ -1,12 +1,14 @@
 import logging
 from datetime import datetime
 
+from django.contrib import auth 
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
-from django.http import HttpResponseRedirect
-
+from django.http import HttpResponseRedirect, HttpResponse 
 from django.contrib.auth.models import User
-from django.contrib import auth 
+
+from s_broadcast.models import Subscription
+from s_users.models import InviteCode
 
 
 def user_info(request, username):
@@ -23,12 +25,11 @@ def register(request):
 
     if request.method == "POST":
 
-        pre_login_session_key = request.session.session_key
-
         username = request.POST.get("username")
 
         if User.objects.filter(username=username).exists():
             errors = "That username has already been taken. If that's your account, try logging in instead. Otherwise, try creating an account with a different username"
+            logging.info("&&& register username taken")
 
         else:
             pw1 = request.POST.get("password_1")
@@ -36,54 +37,80 @@ def register(request):
 
             if pw1 and pw1 != pw2:
                 errors = "Passwords don't match. Typo?"
+                logging.info("&&& register PW don't match")
 
             else:
+
+                try:
+                    invite = InviteCode.objects.get(code=request.POST.get("invite_code")) 
+                except:
+                    invite = None
+
                 email = request.POST.get("email", "")
                 user = User.objects.create_user(username, email=email, password=pw1)
                 user = auth.authenticate(username=username, password=pw1)
-                if user: 
+                if user and invite: 
+                    # use up the invite
+                    invite.delete()
+
                     auth.login(request, user) 
 
-                    # attach any session state to this new account 
-                    init_winnings(user, pre_login_session_key) 
-                    init_metrics(user, pre_login_session_key)
-
+                    logging.info("&&& got invite %s and returning new user success")
                     return HttpResponseRedirect(request.POST.get("next"))
 
+                elif user and not invite:
 
+                    # no invitation
+                    user.is_active = False
+                    user.save()
+
+                    request.session['no_invite'] = user.username
+
+                    logging.info("&&& set no_invite and is_active = False")
+
+                    return HttpResponseRedirect('/') 
+                else:
+                    logging.info("&&& registration failed unexpectedly")
+
+
+    logging.info("&&& returning registration fields")
     return render_to_response("registration/register.html", locals(), context_instance=RequestContext(request))
 
 
-def init_metrics(user, pre_login_session_key):
+def request_invite(request):
 
+    if not 'no_invite' in request.session:
+        # this is bad, since they haven't yet
+        # been rejected for an account, so shouldn't
+        # be able to request anything
+        return HttpResponse("error: no attempted signup")
+
+    username = request.session['no_invite']
+    user = None
     try:
-        metrics = UserMetrics.objects.get(anon_session_key=pre_login_session_key)
-        
+
+        # clear session so they aren't
+        # annoyed every page load w/ prompt
+        del request.session['no_invite']
+
+        user = User.objects.get(username=username)
+        user.get_profile().invite_appeal = request.POST.get("appeal", "")
+        user.get_profile().save()
+
+        subscription, created = Subscription.objects.get_or_create(title="invite_request")
+        subscription.subscribe(user.email)
+
+        return HttpResponse("ok")
+
     except:
-        # they apparently logged in before doing ANYTHING, so
-        # create new metrics for them
-        metrics = UserMetrics(user=user)
-
-    metrics.user = user
-    metrics.signup_version = VERSION
-    metrics.signup_date = datetime.now()
-
-    metrics.save() 
+        return HttpResponse("error: matching user not found") 
 
 
-def init_winnings(user, pre_login_session_key):
+def reject_invite(request):
+    
+    # clear session so they aren't
+    # annoyed every page load w/ prompt
+    del request.session['no_invite']
 
-    beaten_matches = Match.objects.filter(session_key=pre_login_session_key)
-    logging.info("@@@ beaten matches: %s" % beaten_matches)
-    beaten_puzzle_ids = []
-    for match in beaten_matches:
-        if match.type == "puzzle" and match.winner == "friendly" and match.puzzle.id not in beaten_puzzle_ids:
-            beaten_puzzle_ids.append(match.puzzle.id)
+    return HttpResponse("ok")
 
-        # update from pointing to an outdated session key
-        # to pointing at a real live user
-        match.player = user
-        match.save()
-
-    user.get_profile().beaten_puzzle_ids = beaten_puzzle_ids
-    user.get_profile().save()

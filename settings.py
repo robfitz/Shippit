@@ -89,6 +89,7 @@ INSTALLED_APPS = (
     'djangotoolbox',
     'autoload',
     'dbindexer',
+    'filetransfers',
 
     'django.contrib.admin',
     'django.contrib.admindocs',
@@ -110,3 +111,5 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 AUTH_PROFILE_MODULE = 's_users.UserProfile'
+
+LOGIN_REDIRECT_URL = '/'

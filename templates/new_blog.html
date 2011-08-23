@@ -1,0 +1,33 @@
+{% extends 'update.html' %}
+
+{% block before_info %}
+
+    <form enctype="multipart/form-data" id='form' method="post" action='/blurb/{{ project.id }}/'>
+        {% csrf_token %}
+
+        <input type="hidden" value="{{ update.id }}" name="update" /> 
+        <input type="hidden" value="blog" />
+
+{% endblock %}
+
+{% block thumb %}
+
+    {{ block.super }}
+
+    <input name="thumbnail" id="thumbnail_upload" type="file" />
+
+{% endblock %}
+
+{% block title %}
+
+    <input class='input edit_title' value="{% if update.title %}{{ update.title }}{% else %}Untitled thoughts{% endif %}" id="title_id" name="title" />
+
+{% endblock %}
+
+{% block content %}
+
+    <textarea id="content_id" name="content">{{ update.content }}</textarea>
+
+    <input type="submit" class="button blue" value="Publish" />
+
+{% endblock %}

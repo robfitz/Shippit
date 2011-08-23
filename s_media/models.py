@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.db import models
 
+from djangotoolbox.fields import BlobField 
+
 
 class Video(models.Model):
 
@@ -10,19 +12,45 @@ class Video(models.Model):
 
     timestamp = models.DateTimeField(auto_now_add=True) 
 
+    type = "video"
+
 
     def __unicode__(self):
         return "<a href='%s'>%s</a>" % (self.url, self.url)
 
+    def to_html(self):
+
+        return "(some video link)"
+
 
 class Image(models.Model):
 
-    url = models.CharField(max_length=200, default="")
+    # instead of being uploaded, image is just
+    # a link to one hosted elsewhere
+    override_url = models.CharField(max_length=200, default="")
 
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    type = "image"
+
+    # if image is uploaded to our server, here it is
+    data = BlobField(blank=True)
+
+    def url(self):
+
+        if self.override_url:
+            return self.override_url
+
+        else:
+            return "/uploads/%s.png" % self.id
+
+
     def __unicode__(self):
-        return "%s" % self.url
+        return "%s" % self.url()
+
+
+    def to_html(self):
+        return "<a><img class='screenshot' src='%s' /></a>" % self.url()
 
 
 

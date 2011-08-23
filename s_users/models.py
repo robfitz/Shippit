@@ -9,6 +9,11 @@ from djangotoolbox.fields import ListField
 from s_media.models import Image
 
 
+class InviteCode(models.Model):
+
+    code = models.CharField(max_length=20)
+
+
 class UserProfile(models.Model):
 
     user = models.OneToOneField(User)
@@ -17,10 +22,47 @@ class UserProfile(models.Model):
 
     signup_date = models.DateTimeField(auto_now_add=True, null=True)
 
+    update_ids = ListField(models.PositiveIntegerField(), default=[])
+    owned_project_ids = ListField(models.PositiveIntegerField(), default=[])
+    contributer_project_ids = ListField(models.PositiveIntegerField(), default=[]) 
+
+    invite_appeal = models.TextField(blank=True, default="")
 
     def __unicode__(self):
         return self.user.username
 
+
+    def owned_projects(self):
+
+        from s_projects.models import Project
+
+        result = []
+        for id in self.owned_project_ids:
+            result.append(Project.objects.get(id=id))
+
+        return result 
+
+
+    def contributer_projects(self):
+
+        from s_projects.models import Project
+
+        result = []
+        for id in self.contributer_project_ids:
+            result.append(Project.objects.get(id=id))
+
+        return result 
+
+
+    def updates(self):
+
+        from s_stream.models import Update
+
+        result = []
+        for id in self.update_ids:
+            result.append(Update.objects.get(id=id))
+
+        return result 
 
 def create_user_profile(sender, instance, created, **kwargs):
 
@@ -28,11 +70,6 @@ def create_user_profile(sender, instance, created, **kwargs):
 
         # extra info
         profile = UserProfile.objects.create(user=instance)
-
-        # cards they start with
-        profile.deck = Deck.create_starting_deck()
-        profile.save()
-
 
 
 post_save.connect(create_user_profile, sender=User)
