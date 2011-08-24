@@ -41,6 +41,7 @@ def project_info(request, project_id=None):
             project.save()
             
         logging.info("__*__ bout to check request.files: %s" % request.FILES)
+        new_images = []
         for f in request.FILES:
             logging.info("___*___ File: %s" % f)
 
@@ -48,43 +49,48 @@ def project_info(request, project_id=None):
                 image = Image(data=request.FILES.get(f))
                 image.save()
                 project.development_screenshot_ids.append(image.id)
+                new_images.append(image)
             elif f.startswith("launch_media"):
                 image = Image(data=request.FILES.get(f))
                 image.save()
                 project.launch_screenshot_ids.append(image.id)
+                new_images.append(image)
+
 
         project.save()
-        if project.id not in request.user.get_profile.owned_project_ids:
+        if project.id not in request.user.get_profile().owned_project_ids:
             request.user.get_profile().owned_project_ids.append(project.id)
             request.user.get_profile().save()
 
-        update_html = ""
         if not project_id:
             # create a 'new project' update
             update = Update(type="new project",
-                    title="Introducing %s - %s" % (project.title, project.status),
+                    title="Introducing %s" % project.title,
                     author=request.user,
                     project=project,
                     content=project.pitch[:140],
                     is_published=False)
             update.save()
-            update_html = update.to_html() 
 
-        # return the project ID in case a new one
-        # was created and allow the user to continue
-        # editing if desired
+        if new_images:
+
+            gallery_markdown = ""
+
+            for new_image in new_images:
+                gallery_markdown = """%s
+<img src='%s' />""" % ( gallery_markdown, new_image.url())
+
+            update = Update(type="screenshots",
+                    title="New screenshots",
+                    author=request.user,
+                    project=project,
+                    content=gallery_markdown,
+                    is_published=False,
+                    order=1)
+            update.save()
 
         return HttpResponseRedirect("/project/%s/" % project.id)
 
-        response_json = {
-                'result': 'ok',
-                'project': "%s" % project.id,
-                'update_html': update_html 
-                } 
-
-        # logging.info("*(*(*(* %s" % simplejson.dumps(response_json))
-
-        return HttpResponse(simplejson.dumps(response_json), "application/javascript") 
 
 
     # TODO: check user's edit permissions

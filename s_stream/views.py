@@ -30,7 +30,7 @@ def stream(request):
 
     if request.user.is_authenticated():
         for unconfirmed in Update.objects.filter(is_published=False, author=request.user):
-            unconfirmed_updates_html = """%s %s""" % (unconfirmed.to_html(), unconfirmed_updates_html) 
+            unconfirmed_updates_html = """%s %s""" % (unconfirmed_updates_html, unconfirmed.to_html())
 
     if not updates_html: 
         updates = Update.objects.all()[:50]
@@ -39,7 +39,7 @@ def stream(request):
         for update in updates:
             if update.is_published:
                 updates_html = """%s
-    %s""" % (update.to_html(), updates_html)
+    %s""" % (updates_html, update.to_html() )
 
     show_no_invite_alert = False
     if 'no_invite' in request.session:

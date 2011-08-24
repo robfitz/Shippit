@@ -30,9 +30,8 @@
 
 <div class='post_contents' >
     {% block content %}
-    <p>
-        {{ update.content|safe }} 
-    </p> 
+        {% load markup %}
+        {{ update.content|markdown }} 
     {% endblock content %}
 </div>
 

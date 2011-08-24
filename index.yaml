@@ -56,6 +56,80 @@ indexes:
   - name: __key__
     direction: desc
 
+- kind: s_stream_update
+  properties:
+  - name: author_id
+  - name: is_published
+  - name: order
+    direction: desc
+
+- kind: s_stream_update
+  properties:
+  - name: author_id
+  - name: is_published
+  - name: order
+    direction: desc
+  - name: timestamp
+    direction: desc
+
+- kind: s_stream_update
+  properties:
+  - name: author_id
+  - name: is_published
+  - name: timestamp
+  - name: order
+    direction: desc
+
+- kind: s_stream_update
+  properties:
+  - name: author_id
+  - name: is_published
+  - name: timestamp
+    direction: desc
+
+- kind: s_stream_update
+  properties:
+  - name: author_id
+  - name: is_published
+  - name: timestamp
+    direction: desc
+  - name: order
+
+- kind: s_stream_update
+  properties:
+  - name: author_id
+  - name: is_published
+  - name: timestamp
+    direction: desc
+  - name: order
+    direction: desc
+
+- kind: s_stream_update
+  properties:
+  - name: order
+    direction: desc
+  - name: timestamp
+    direction: desc
+
+- kind: s_stream_update
+  properties:
+  - name: timestamp
+  - name: order
+    direction: desc
+
+- kind: s_stream_update
+  properties:
+  - name: timestamp
+    direction: desc
+  - name: order
+
+- kind: s_stream_update
+  properties:
+  - name: timestamp
+    direction: desc
+  - name: order
+    direction: desc
+
 - kind: s_users_userprofile
   properties:
   - name: __key__

@@ -1,6 +1,8 @@
 import logging
 import string
 
+import markdown
+
 from django.db import models 
 from django.contrib import admin
 from django.shortcuts import render_to_response
@@ -45,6 +47,16 @@ class Update(models.Model):
     content = models.TextField(default="", blank=True)
 
     is_published = models.BooleanField(default=True)
+
+    # post-by-date is primary ordering method
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    # if multiple posts happen simultaneously, they may be ordered
+    order = models.PositiveIntegerField(default=0)
+
+
+    class Meta: 
+        ordering = ['-timestamp', 'order']
 
 
     def thumb(self):
@@ -106,6 +118,9 @@ class Update(models.Model):
         title_html = self.title_html()
 
         inline_template = get_template("update_attribution_inlines.html")
+        clipped_content = self.content
+        if len(clipped_content) > 140:
+            clipped_content = "%s..." % clipped_content[:137]
 
         html = """<div class='update %s' id='%s' name='%s'>
     <div class='endcap %s'>
@@ -116,7 +131,7 @@ class Update(models.Model):
         <h4 class='blurb_title'>%s</h4>
         %s
         <div class='contents'>
-            <p>%s</p>
+            %s
         </div>
     </div> 
 </div>
@@ -129,7 +144,7 @@ class Update(models.Model):
             self.thumb(), 
             title_html, 
             inline_template.render(Context({ 'update': self })),
-            self.content) 
+            markdown.markdown(clipped_content)) 
 
         cache.set("update_html_%s" % self.id, html, 60*60)
         return html
