@@ -20,6 +20,12 @@
 
     </p>
 
+    {% if request.user == update.author %}
+        <p>
+        <a class='ajax_link' href='/blurb/{{ update.id }}/?edit=t'>Edit</a>
+        </p>
+    {% endif %}
+
 </div>
 
 <div class='post_contents' >

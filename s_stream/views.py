@@ -124,7 +124,7 @@ def update_info(request, update_id):
 
         logging.info("$$$ saved update: %s" % update.id)
 
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect("/blurb/%s/" % update.id)
 
     update = get_object_or_404(Update, id=update_id) 
 
@@ -134,4 +134,18 @@ def update_info(request, update_id):
         # but rather link straight to the project in question
         return HttpResponseRedirect("/project/%s/" % update.project.id)
 
-    return render_to_response("update.html", locals())
+    is_edit = request.GET.get("edit")
+
+    if request.is_ajax(): 
+        if is_edit:
+            return render_to_response("new_blog.html", locals(), context_instance=RequestContext(request))
+
+        return render_to_response("update.html", locals())
+
+    else:
+        url = '/blurb/%s/' % update_id
+        if is_edit:
+            url = "%s?edit=t" % url
+        request.session['info_ajax_url'] = url
+
+        return HttpResponseRedirect("/") 

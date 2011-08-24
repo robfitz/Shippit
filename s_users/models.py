@@ -35,6 +35,12 @@ class UserProfile(models.Model):
         return self.user.username
 
 
+    def all_project_ids(self):
+        all = list(self.contributer_project_ids)
+        all.extend(self.owned_project_ids)
+        return all
+
+
     def owned_projects(self):
 
         from s_projects.models import Project

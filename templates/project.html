@@ -22,7 +22,7 @@
 
         {{ project.status }}
 
-        {% if request.user.is_authenticated %}
+        {% if project.id in request.user.get_profile.all_project_ids %}
             <p>
             <a class='ajax_link' href='/project/{{ project.id }}/?edit=t'>Edit</a>
             </p>
@@ -37,13 +37,14 @@
     <h3>Pitch</h3>
 
     {% block pitch %}
-        <p>
         {% if project.pitch %}
-            {{ project.pitch }}
+            {% load markup %}
+            {{ project.pitch|markdown }}
         {% else %}
+            <p>
             None yet
+            </p>
         {% endif %}
-        </p>
     {% endblock pitch %}
 
     <h3>Launch media</h3>

@@ -38,37 +38,49 @@
 
     {% block about %}
         {% if user.get_profile.about %} 
-            <p>
-                {{ user.get_profile.about }}
-            </p> 
+
+            {% load markup %}
+
+            {{ user.get_profile.about|markdown }}
+
         {% else %} 
+            <p>
             None yet 
+            </p>
         {% endif %}
     {% endblock %}
+
+</div>
 
     {% if user.get_profile.owned_projects %}
         <h3>Games I lead</h3>
 
+        <p>
         <ul class='mini_updates'>
             {% for project in user.get_profile.owned_projects reversed %}
                 <li>{% include 'project_title_inline.html' %}
             {% endfor %}
         </ul>
+        </p>
     {% endif %}
 
     <h3>Games I contribute to</h3>
 
     {% if user.get_profile.contributer_projects %} 
 
+        <p>
         <ul class='mini_updates'>
             {% for project in user.get_profile.contributer_projects reversed %}
                 <li>{% include 'project_title_inline.html' %}
             {% endfor %}
         </ul>
+        </p>
 
     {% else %}
 
+        <p>
         None yet
+        </p>
 
     {% endif %}
 
@@ -84,8 +96,8 @@
 
     {% else %}
 
+        <p>
         None yet
+        </p>
 
     {% endif %}
-
-</div>

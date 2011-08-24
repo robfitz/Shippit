@@ -54,6 +54,9 @@ def project_info(request, project_id=None):
                 project.launch_screenshot_ids.append(image.id)
 
         project.save()
+        if project.id not in request.user.get_profile.owned_project_ids:
+            request.user.get_profile().owned_project_ids.append(project.id)
+            request.user.get_profile().save()
 
         update_html = ""
         if not project_id:
