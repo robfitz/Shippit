@@ -1,7 +1,7 @@
 <div class='title_inline'>
 
     <a href='/project/{{ project.id }}/'>
-        <img src='{{ project.thumbnail|default:"/media/default_project.png" }}' class='thumb_inline' />
+        <img src='{{ project.thumbnail.thumb_url|default:"/media/default_project.png" }}' class='thumb_inline' />
     </a>
 
     <a href='/project/{{ project.id }}/'>{{ project.title }}</a>

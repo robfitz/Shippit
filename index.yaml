@@ -128,6 +128,13 @@ indexes:
   - name: timestamp
     direction: desc
   - name: order
+  - name: is_published
+
+- kind: s_stream_update
+  properties:
+  - name: timestamp
+    direction: desc
+  - name: order
     direction: desc
 
 - kind: s_users_userprofile

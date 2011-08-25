@@ -40,6 +40,10 @@
         $(".post_contents img").wrap(function() {
             return "<a href='" + $(this).attr('src') + "' class='lightbox' />";
             }); 
+        $(".post_contents img").each(function() {
+            var toks = $(this).attr("src").split(".");
+            $(this).attr("src", toks[0] + ".thumb." + toks[toks.length - 1]);
+        });
     });
 </script>
 

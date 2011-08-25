@@ -49,7 +49,7 @@ class Update(models.Model):
     is_published = models.BooleanField(default=True)
 
     # post-by-date is primary ordering method
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True, null=True)
 
     # if multiple posts happen simultaneously, they may be ordered
     order = models.PositiveIntegerField(default=0)
@@ -82,18 +82,14 @@ class Update(models.Model):
 
     def __unicode__(self):
 
-        return "%s - %s (%s by %s)" % (
-                self.project,
-                self.title,
-                self.type,
-                self.author.username)
+        return "%s" % ( self.title )
 
 
     def title_html(self):
 
         trunc_title = self.title
         if len(trunc_title) > 50:
-            trunc_title = "%s..." % trunc_title[:27]
+            trunc_title = "%s..." % trunc_title[:47]
 
         title_html = "<a class='ajax_link' href='/blurb/%s/'>%s</a>" % (self.id, trunc_title)
 
@@ -119,7 +115,7 @@ class Update(models.Model):
 
         inline_template = get_template("update_attribution_inlines.html")
         clipped_content = self.content
-        if len(clipped_content) > 140:
+        if len(clipped_content) >= 140:
             clipped_content = "%s..." % clipped_content[:137]
 
         html = """<div class='update %s' id='%s' name='%s'>

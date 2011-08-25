@@ -73,11 +73,12 @@ def discard_unconfirmed(request, update_id):
     
         if update.is_published:
             return HttpResponse("error: update %s has already been confirmed" % update_id)
-        elif (not request.user.is_authenticated()) or update.author != request.user:
-            return HttpResponse("error: no permissions")
         else:
-            update.delete()
-            return HttpResponse("ok")
+            if (not request.user.is_authenticated()) or update.author != request.user:
+                return HttpResponse("error: no permissions")
+            else:
+                update.delete()
+                return HttpResponse("ok")
     except:
         logging.info(sys.exc_info()[0])
         return HttpResponse("error: update %s does not exist" % update_id)

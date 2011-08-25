@@ -377,10 +377,14 @@ ul.mini_updates li {
 
         $(".update").each(function() {
 
-            
             $(this).find(".contents img").wrap(function() {
-                return "<a href='" + $(this).attr('src') + "' class='lightbox' />";
+                var toks = $(this).attr("src").split(".");
+                return "<a href='" + toks[0] + "." + toks[toks.length-1] + "' class='lightbox' />";
             }); 
+            $(this).find(".contents img").each(function() {
+                var toks = $(this).attr("src").split(".");
+                $(this).attr("src", toks[0] + ".thumb." + toks[toks.length - 1]);
+            });
 
             $(this).find(".lightbox").lightBox();
         });

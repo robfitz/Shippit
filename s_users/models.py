@@ -1,3 +1,4 @@
+import logging, sys
 from django.db import models
 
 from django.contrib import admin
@@ -67,11 +68,30 @@ class UserProfile(models.Model):
 
         from s_stream.models import Update
 
-        result = []
+        to_delete = []
+        ups = []
+        i = 0
+        logging.info("user update ids: %s" % self.update_ids)
         for id in self.update_ids:
-            result.append(Update.objects.get(id=id))
+            try: 
+                update = Update.objects.get(id=id)
+                logging.info("got update: %s" % update)
+                ups.append(update)
+            except:
+                # update no longer exists, ignore
+                logging.info("to delete appended: %s" % i)
+                to_delete.append(i)
+            i += 1
 
-        return result 
+        if to_delete:
+            logging.info("*** to del from user: %s" % to_delete)
+            i = 0
+            for to_del in to_delete:
+                del self.update_ids[to_del - i]
+                i += 1 
+            self.save()
+
+        return ups 
 
 def create_user_profile(sender, instance, created, **kwargs):
 

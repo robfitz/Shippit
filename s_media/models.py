@@ -1,5 +1,9 @@
+import logging, sys
+
 from django.contrib import admin
 from django.db import models
+
+from google.appengine.api import images
 
 from djangotoolbox.fields import BlobField 
 
@@ -36,6 +40,33 @@ class Image(models.Model):
     # if image is uploaded to our server, here it is
     data = BlobField(blank=True)
 
+    thumbnail_data = BlobField(blank=True, default=None, null=True)
+
+
+    def thumbnail(self):
+        logging.info("### s_media img thumb()")
+
+        if not self.thumbnail_data: 
+            try:
+                img = images.Image(self.data)
+                img.resize(width=100, height=100)
+                logging.info("dir img: %s" % dir(img))
+                thumb_data = img.execute_transforms(output_encoding=images.PNG)
+                self.thumbnail_data = thumb_data
+                self.save()
+            except:
+                logging.info("*** exception getting thumbnail: %s" % sys.exc_info()[0])
+                self.thumbnail_data = None
+                self.save() 
+
+        if self.thumbnail_data:
+            logging.info("### returning thumb data")
+            return self.thumbnail_data
+
+        else:
+            logging.info("### returning non-thumb data for thumb")
+            return self.data
+
     def url(self):
 
         if self.override_url:
@@ -44,6 +75,17 @@ class Image(models.Model):
         else:
             return "/uploads/%s.png" % self.id
 
+    def thumb_url(self):
+
+        if self.override_url:
+            return self.override_url
+
+        else:
+            return "/uploads/%s.thumb.png" % self.id
+
+
+    
+
 
     def __unicode__(self):
         return "%s" % self.url()
@@ -51,7 +93,6 @@ class Image(models.Model):
 
     def to_html(self):
         return "<a><img class='screenshot' src='%s' /></a>" % self.url()
-
 
 
 admin.site.register(Image)
