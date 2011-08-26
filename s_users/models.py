@@ -15,6 +15,11 @@ class InviteCode(models.Model):
 
     code = models.CharField(max_length=20)
 
+    quantity = models.PositiveIntegerField(default=1)
+
+
+    def __unicode__(self):
+        return "%sx %s" % (self.quantity, self.code)
 
 class UserProfile(models.Model):
 
@@ -107,3 +112,4 @@ def create_user_profile(sender, instance, created, **kwargs):
 post_save.connect(create_user_profile, sender=User)
 
 admin.site.register(UserProfile)
+admin.site.register(InviteCode)

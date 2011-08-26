@@ -37,7 +37,7 @@ class Project(models.Model):
 
     update_ids = ListField(models.PositiveIntegerField(), default=[])
 
-    pitch = models.TextField()
+    pitch = models.TextField(blank=True)
 
 
     def updates(self):

@@ -2,6 +2,11 @@
 {% endblock %}
 
 <div class="info_top">
+
+    {% block title %}
+        <h2>{{ update.title }}</h2>
+    {% endblock %}
+
     <div class="info_thumb">
         {% block thumb %} 
 
@@ -10,15 +15,7 @@
         {% endblock thumb %}
     </div>
 
-    {% block title %}
-        <h2>{{ update.title }}</h2>
-    {% endblock %}
-
-    <p>
-
-        {% include 'update_attribution_inlines.html' %}
-
-    </p>
+    {% include 'update_attribution_inlines.html' %} 
 
     {% if request.user == update.author %}
         <p>

@@ -5,6 +5,11 @@
 
 <div class="info_top">
 
+    {% block title %}
+        <h2>{{ project.title }}</h2>
+
+    {% endblock title %}
+
     <div class="info_thumb">
     {% block thumb %} 
 
@@ -13,10 +18,6 @@
     {% endblock thumb %}
     </div>
 
-    {% block title %}
-        <h2>{{ project.title }}</h2>
-
-    {% endblock title %}
 
     {% block status %}
 
@@ -47,8 +48,25 @@
         {% endif %}
     {% endblock pitch %}
 
-    <h3>Launch media</h3>
+    <h3>Development media</h3>
+    {% block development_media %}
+        {% if project.development_media %} 
 
+            {% for media in project.development_media reversed %}
+            <script>
+            // alert("{{ media.to_html|safe }}");
+            </script>
+                {{ media.to_html|safe }}
+            {% endfor %}
+
+        {% else %}
+        <p>
+            None yet
+        </p>
+        {% endif %}
+    {% endblock development_media %}
+
+    <h3>Launch media</h3> 
     {% block launch_media %}
         {% if project.launch_media %} 
             {% for media in project.launch_media reversed %}
@@ -60,21 +78,6 @@
         </p>
         {% endif %} 
         {% endblock launch_media %}
-
-    <h3>Development media</h3>
-    {% block development_media %}
-        {% if project.development_media %} 
-
-            {% for media in project.development_media reversed %}
-                {{ media.to_html|safe }}
-            {% endfor %}
-
-        {% else %}
-        <p>
-            None yet
-        </p>
-        {% endif %}
-    {% endblock development_media %}
 
 </div>
 

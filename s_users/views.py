@@ -92,12 +92,16 @@ def register(request):
                 user = auth.authenticate(username=username, password=pw1)
                 if user and invite: 
                     # use up the invite
-                    invite.delete()
+                    invite.quantity -= 1
+                    if invite.quantity <= 0:
+                        invite.delete()
+                    else:
+                        invite.save()
 
                     auth.login(request, user) 
 
                     logging.info("&&& got invite %s and returning new user success")
-                    return HttpResponseRedirect(request.POST.get("next"))
+                    return HttpResponseRedirect('/project/new/')
 
                 elif user and not invite:
 

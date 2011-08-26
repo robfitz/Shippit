@@ -137,6 +137,11 @@ indexes:
   - name: order
     direction: desc
 
+- kind: s_users_invitecode
+  properties:
+  - name: __key__
+    direction: desc
+
 - kind: s_users_userprofile
   properties:
   - name: __key__

@@ -1,9 +1,12 @@
 import logging, sys
 
 from django.http import HttpResponseRedirect, HttpResponse
+from django.views.decorators.cache import cache_page
 
-from s_media.models import Image
+from s_media.models import Image 
 
+
+@cache_page ( 60 * 60 * 24 )
 def get_uploaded_image(request, id):
 
     toks = id.split('.')

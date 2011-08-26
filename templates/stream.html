@@ -50,11 +50,19 @@ Multiplayful
 }
 .info textarea {
     width:320px;
-    height:200px;
+    height:150px;
 }
 .info .button {
     float:right;
     margin:0;
+}
+
+.launch_vid label, .dev_vid label {
+    width:120px;
+    float:left;
+}
+.launch_vid input, .dev_vid input {
+    width:200px;
 }
 
 .info_thumb img {
@@ -202,6 +210,12 @@ ul.mini_updates li {
     float:left;
     margin-right:4px;
 }
+.header .thumb_inline {
+    height:16px;
+    width:16px;
+    margin:0;
+    float:none;
+}
 
 .title_inlines { 
     float:left;
@@ -300,7 +314,9 @@ ul.mini_updates li {
 
 <div class='left_col'>
 
-    {% include 'email_c2a.html' %}
+    {% if not request.user.is_authenticated %}
+        {% include 'email_c2a.html' %}
+    {% endif %}
 
     <div class='stream border rounded'> 
 
@@ -391,9 +407,12 @@ ul.mini_updates li {
 
         $('.info .lightbox').lightBox();
 
-
-    }
-
+        // do last in case it doesn't load
+        $('.info').embedly({
+            key:'d3f9f6e8c7ee11e0b9a74040d3dc5c07',
+            maxWidth:$('.info').width(),
+        });
+    } 
 
     $(function() { 
 
@@ -440,8 +459,6 @@ ul.mini_updates li {
             home();
         {% endif %}
 
-        // do last in case it doesn't load
-        $('.update').embedly({key:'d3f9f6e8c7ee11e0b9a74040d3dc5c07'});
     });
 
     function home() {

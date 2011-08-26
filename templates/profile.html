@@ -5,6 +5,10 @@
 
 <div class="info_top">
 
+    {% block title %} 
+    <h2>{{ user.username }}</h2>
+    {% endblock %}
+
     <div class="info_thumb">
     {% block thumb %} 
 
@@ -12,10 +16,6 @@
 
     {% endblock thumb %}
     </div>
-
-    {% block title %} 
-    <h2>{{ user.username }}</h2>
-    {% endblock %}
 
     <p>
     <span class="medium">Member for {{ user.get_profile.signup_date|timesince }}</span> 
@@ -51,6 +51,7 @@
     {% endblock %}
 
 </div>
+<div class="fl">
 
     {% if user.get_profile.owned_projects %}
         <h3>Games I lead</h3>
@@ -101,3 +102,4 @@
         </p>
 
     {% endif %}
+</div>

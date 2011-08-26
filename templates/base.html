@@ -227,13 +227,26 @@
 
                             {% if request.user.is_authenticated %}
                                 <div class="fr">
-                                    <a class='ajax_link header_link fl' href="/blurb/new/">New post</a>
-                                    <a class='ajax_link header_link fl' href="/project/new/">New project or pitch</a>
-                                    <a class='ajax_link header_link fl border-left' href="/user/{{ request.user.username }}/">Your profile & projects</a>
-                                    <a href="/accounts/logout/" class="fl header_link ">Log out</a>
+                                    <a class='ajax_link header_link fl' href="/blurb/new/">
+                                        <img src="/media/ui/note_add.png" />
+                                        New post
+                                    </a>
+                                    <a class='ajax_link header_link fl' href="/project/new/">
+                                        <img src="/media/ui/controller.png" />
+                                        New project
+                                    </a>
+                                        
+                                    <a class='ajax_link header_link fl border-left' href="/user/{{ request.user.username }}/">
+                                        <img src='{{ request.user.get_profile.thumbnail.thumb_url|default:"/media/default_user.png" }}' class='thumb_inline' />
+                                        Your stuff
+                                    </a>
+                                    <a href="/accounts/logout/" class="fl header_link ">
+                                        <img src="/media/ui/door_open.png" />
+                                        Log out
+                                    </a>
 
                                     {% if request.user.is_staff %}
-                                        <a href="/admin/" class="fl header_link border-left">Admin</a>
+                                    <a href="/admin/" class="fl header_link border-left"><img src="/media/ui/drink.png" /> Admin</a>
                                     {% endif %}
 
                                 </div>

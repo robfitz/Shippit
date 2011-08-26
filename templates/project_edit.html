@@ -44,22 +44,71 @@
 
 {% endblock %}
 
-{% block launch_media %}
-    {% if project.launch_media %} 
-        {{ block.super }}
-    {% endif %}
-    <input name='launch_media' type="file" class='gallery' />
-{% endblock %}
-
 {% block development_media %}
     {% if project.development_media %} 
         {{ block.super }}
     {% endif %}
     <input name='development_media' type="file" class='gallery' />
+    <p>
+    <a href="javascript:void(0);" id="new_development_video">Add youtube video</a>
+    </p>
+
+    <div id="new_dev_vid" class="hidden dev_vid">
+        <label for="id_development_video_url">Youtube link</label>
+        <input name="development_video_url" id="id_development_video_url" />
+        <label for="id_development_video_description">Video description</label>
+        <input name="development_video_description" id="id_development_video_description" />
+    </div>
+{% endblock %}
+
+{% block launch_media %}
+    {% if project.launch_media %} 
+        {{ block.super }}
+    {% endif %}
+    <input name='launch_media' type="file" class='gallery' />
+    <p>
+    <a href="javascript:void(0);" id="new_launch_video">Add youtube video</a>
+    </p>
+    <div id="new_launch_vid" class="hidden launch_vid">
+        <label for="id_launch_video_url">Youtube link</label>
+        <input name="launch_video_url" id="id_launch_video_url" />
+        <label for="id_launch_video_description">Video description</label>
+        <input name="launch_video_description" id="id_launch_video_description" />
+    </div>
 {% endblock %}
 
 {% block after_info %}
     </form>
+
+    <script>
+        $(function() {
+            $("#title_id").focus();
+
+            $("#new_launch_video").click( function () {
+                var vid = $("#new_launch_vid").clone();
+                vid.attr("id", "")
+                vid.insertAfter($(this));
+                vid.show(); 
+                vid.find("input, textarea").each( function () {
+                    $(this).attr("name", $(this).attr("name") + "_" + uploads);
+                }); 
+                uploads ++;
+            });
+
+            $("#new_development_video").click( function () {
+                var vid = $("#new_dev_vid").clone();
+                vid.attr("id", "")
+                // $(this).insertAfter(vid);
+                vid.insertAfter($(this));
+                vid.show(); 
+                vid.find("input, textarea").each( function () {
+                    $(this).attr("name", $(this).attr("name") + "_" + uploads);
+                } );
+                uploads ++;
+            });
+
+        });
+    </script>
 
     <script>
 
