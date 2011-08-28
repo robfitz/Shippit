@@ -20,3 +20,15 @@ def ordinal(n):
 
 
 
+def str_to_array(str):
+    arr = []
+    str = str[1:len(str)-1] #strip '[' and ']'
+    toks = str.split(',')
+    for tok in toks:
+        if tok:
+            # list field is insisting on making the
+            # ids "2L" rather than "2", so convert
+            # through a long
+            arr.append(int(long(tok.strip())))
+
+    return arr

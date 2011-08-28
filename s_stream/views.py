@@ -7,6 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.cache import cache
 
 from s_stream.models import Update
+from s_projects.models import Project
 from s_media.models import Image
 
 
@@ -103,6 +104,17 @@ def update_info(request, update_id):
 
         update.title = request.POST.get("title")
         update.content = request.POST.get("content")
+
+        project_id = request.POST.get("project", "")
+        if project_id:
+            try:
+                if update.project:
+                    update.project.remove_update(update)
+                project = Project.objects.get(id=project_id)
+                update.project = project
+            except:
+                update.project = None
+
         update.save()
 
         if request.FILES.get("thumbnail"):

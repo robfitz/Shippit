@@ -8,6 +8,8 @@ from django.core.cache import cache
 
 from s_media.models import Image, Video
 
+from utils.util import str_to_array
+
 
 STATUS_OPTIONS = (("idea", "A humble idea"),
         ("development", "In development"),
@@ -38,6 +40,18 @@ class Project(models.Model):
     update_ids = ListField(models.PositiveIntegerField(), default=[])
 
     pitch = models.TextField(blank=True)
+
+
+    def remove_update(self, update):
+
+        i = 0
+        for id in self.update_ids:
+            if id == update.id:
+                del self.update_ids[i]
+                self.save()
+                return True
+            i += 1
+        return False 
 
 
     def updates(self):
@@ -119,18 +133,6 @@ def clean_listfields(sender, instance, raw, **kwargs):
         instance.update_ids = str_to_array(instance.update_ids)
 
 
-def str_to_array(str):
-    arr = []
-    str = str[1:len(str)-1] #strip '[' and ']'
-    toks = str.split(',')
-    for tok in toks:
-        if tok:
-            # list field is insisting on making the
-            # ids "2L" rather than "2", so convert
-            # through a long
-            arr.append(int(long(tok.strip())))
-
-    return arr
 
 
 def save_project(sender, instance, created, **kwargs):
@@ -143,16 +145,12 @@ def project_deleted(sender, instance, **kwargs):
 
     from s_stream.models import Update
 
-    logging.info("**** project deleted")
-
     for update_id in instance.update_ids:
         try:
-            logging.info("&&& trying to delete update: %s" % update_id)
             update = Update.objects.get(id=update_id)
             update.delete()
             logging.info("success")
         except:
-            logging.info("failure, %s" % sys.exc_info()[0])
             pass 
 
 

@@ -9,21 +9,24 @@
     
 {% endblock %}
 
-{% block thumb %}
+{% block thumb %} 
+{% endblock %}
 
-    {{ block.super }}
-
-    <input name="thumbnail" id="thumbnail_upload" type="file" />
-
+{% block info %}
 {% endblock %}
 
 {% block title %}
 
+    <h3>Username <span class="medium">You use this to log in and it will be shown on your posts</span></h3> 
     <input class='input edit_username' value="{{ user.username }}" id="username_id" name="username" />
+
+    <h3>Thumbnail <span class="medium"></span></h3>
+    <input name="thumbnail" id="thumbnail_upload" type="file" /> 
 
 {% endblock %}
 
 {% block about %} 
+    <h3>About <span class="medium">What are you excited about making?</span></h3>
     <textarea id="about_id" name="about">{{ user.get_profile.about }}</textarea>
 
     <input type="submit" class="button blue" value="Save changes" />
@@ -38,4 +41,7 @@
         });
     </script>
 
+{% endblock %}
+
+{% block projects %}
 {% endblock %}

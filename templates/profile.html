@@ -6,7 +6,12 @@
 <div class="info_top">
 
     {% block title %} 
-    <h2>{{ user.username }}</h2>
+    {% if request.user == user %}
+        <h2>{{ user.username }}<span class="medium" style="margin-left:10px;"><a class='ajax_link' href='/user/{{ user.username }}/?edit=t'><img src="/media/ui/page_edit.png"/>Edit</a></span></h2>
+    {% else %}
+        <h2>{{ user.username }}</h2>
+    {% endif %}
+        
     {% endblock %}
 
     <div class="info_thumb">
@@ -17,6 +22,7 @@
     {% endblock thumb %}
     </div>
 
+    {% block info %}
     <p>
     <span class="medium">Member for {{ user.get_profile.signup_date|timesince }}</span> 
     </p>
@@ -25,18 +31,13 @@
     <span class="tag">game design</span>, <span class="tag">coding</span>
     <p>
 
-    {% if request.user == user %}
-        <p>
-        <a class='ajax_link' href='/user/{{ user.username }}/?edit=t'>Edit</a>
-        </p>
-    {% endif %}
+    {% endblock %}
 </div>
 
 <div class='post_contents' >
 
-    <h3>About</h3>
-
     {% block about %}
+        <h3>About</h3>
         {% if user.get_profile.about %} 
 
             {% load markup %}
@@ -52,6 +53,8 @@
 
 </div>
 <div class="fl">
+
+    {% block projects %}
 
     {% if user.get_profile.owned_projects %}
         <h3>Games I lead</h3>
@@ -102,4 +105,5 @@
         </p>
 
     {% endif %}
+    {% endblock %}
 </div>

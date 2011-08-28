@@ -9,23 +9,22 @@
     
 {% endblock %}
 
-{% block thumb %}
-
-    {{ block.super }}
-
-    <input name="thumbnail" id="thumbnail_upload" type="file" />
-
+{% block thumb %} 
 {% endblock %}
 
 {% block title %}
 
-    <input class='input edit_title' value="{% if project.title %}{{ project.title }}{% else %}Untitled project{% endif %}" id="title_id" name="title" />
+    <h3>Game name</h3>
+    <input class='input' value="{{ update.title }}" id="title_id" name="title" />
+
+    <h3>Thumbnail <span class="medium"></span></h3>
+    <input name="thumbnail" id="thumbnail_upload" type="file" />
 
 {% endblock %}
 
 {% block status %}
+    <h3>Status <span class="medium">How far along are you?</span></h3>
     <p>
-    <label for="status_id">Status:</label>
     <select name="status">
         {% for status, name in statuses %}
         <option value='{{ status }}' {%if status == project.status%}selected=true{%endif%}>{{ name }}</option>
@@ -33,18 +32,21 @@
     </select>
     </p>
 
-    <input type="submit" class="button blue" value="Save changes" />
-
 {% endblock status %}
 
 {% block pitch %}
+
+    <h3>Elevator pitch <span class="medium">Describe the game in a couple sentences.</span></h3>
+    
     <textarea id="pitch_id" name="pitch">{{ project.pitch }}</textarea>
 
-    <input type="submit" class="button blue" value="Save changes" />
 
 {% endblock %}
 
 {% block development_media %}
+
+    <h3>Development media <span class="medium">Video and images of the work-in-progress.</span></h3>
+
     {% if project.development_media %} 
         {{ block.super }}
     {% endif %}
@@ -62,6 +64,7 @@
 {% endblock %}
 
 {% block launch_media %}
+    <!--
     {% if project.launch_media %} 
         {{ block.super }}
     {% endif %}
@@ -75,9 +78,14 @@
         <label for="id_launch_video_description">Video description</label>
         <input name="launch_video_description" id="id_launch_video_description" />
     </div>
+    -->
+{% endblock %}
+
+{% block updates %}
 {% endblock %}
 
 {% block after_info %}
+        <input type="submit" class="button blue" value="Save changes" />
     </form>
 
     <script>

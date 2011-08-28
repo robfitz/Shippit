@@ -41,7 +41,7 @@ p {
     font-family: 'Droid Sans';
     font-style: normal;
     font-weight: normal;
-    src: local("Droid Sans"), url( /assets/fonts/DroidSans.ttf ) format("truetype"); 
+    src: local("Droid Sans"), url( DroidSans.ttf ) format("truetype"); 
 }
 
 .medium {

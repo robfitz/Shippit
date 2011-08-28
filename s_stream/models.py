@@ -147,21 +147,19 @@ class Update(models.Model):
 
 def create_update(sender, instance, created, **kwargs):
 
-    if created: 
-        logging.info("%s %s %s" % (instance, instance.project, instance.author))
-        if instance.project:
-            # attach update to the project it refers to
-            instance.project.update_ids.append(instance.id)
-            instance.project.save()
+    if instance.project and instance.id not in instance.project.update_ids:
+        # attach update to the project it refers to
+        instance.project.update_ids.append(instance.id)
+        instance.project.save()
 
-        if instance.author:
-            # attach update to the user responsible for publishing this 
-            instance.author.get_profile().update_ids.append(instance.id)
-            instance.author.get_profile().save()
+    if instance.author and instance.id not in instance.author.update_ids:
+        # attach update to the user responsible for publishing this 
+        instance.author.get_profile().update_ids.append(instance.id)
+        instance.author.get_profile().save()
 
-    else:
-        # object has changed, cache is dirty
-        cache.delete("update_html_%s" % instance.id)
+    # object has changed, cache is dirty
+    cache.delete("update_html_%s" % instance.id)
+
 
 
 post_save.connect(create_update, sender=Update)

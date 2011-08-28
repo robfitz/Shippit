@@ -3,12 +3,13 @@ from django.db import models
 
 from django.contrib import admin
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.core.cache import cache
 
 from djangotoolbox.fields import ListField 
 
 from s_media.models import Image
+from utils.util import str_to_array
 
 
 class InviteCode(models.Model):
@@ -25,7 +26,7 @@ class UserProfile(models.Model):
 
     user = models.OneToOneField(User)
 
-    thumbnail = models.ForeignKey(Image, null=True)
+    thumbnail = models.ForeignKey(Image, null=True, blank=True)
 
     signup_date = models.DateTimeField(auto_now_add=True, null=True)
 
@@ -46,14 +47,36 @@ class UserProfile(models.Model):
         all.extend(self.owned_project_ids)
         return all
 
+    def all_projects(self):
+
+        logging.info("*** all projects"  )
+
+        all = list(self.owned_projects())
+        all.extend(self.contributer_projects())
+        logging.info("*** all projects: %s" % all)
+        return all 
+    
 
     def owned_projects(self):
 
         from s_projects.models import Project
 
         result = []
+        to_delete = []
+        i = 0
         for id in self.owned_project_ids:
-            result.append(Project.objects.get(id=id))
+            try:
+                result.append(Project.objects.get(id=id))
+            except:
+                to_delete.append(i)
+            i += 1
+
+        if to_delete:
+            i = 0
+            for to_del in to_delete:
+                del self.owned_project_ids[to_del - i]
+                i += 1 
+            self.save()
 
         return result 
 
@@ -63,8 +86,24 @@ class UserProfile(models.Model):
         from s_projects.models import Project
 
         result = []
+        to_delete = []
+        i = 0
         for id in self.contributer_project_ids:
-            result.append(Project.objects.get(id=id))
+            try:
+                logging.info("&&& trying to get projet id:%s" % id)
+                result.append(Project.objects.get(id=id))
+            except:
+                to_delete.append(i)
+            i += 1
+
+        if to_delete:
+            i = 0
+            for to_del in to_delete:
+                del self.contributer_project_ids[to_del - i]
+                i += 1 
+            self.save()
+
+        logging.info("&&&& contrib projects: %s" % result)
 
         return result 
 
@@ -109,7 +148,20 @@ def create_user_profile(sender, instance, created, **kwargs):
         cache.delete("update_html_%s" % update_id)
         
 
+def clean_listfields(sender, instance, raw, **kwargs):
+    
+    if instance.owned_project_ids.__class__ != list:
+        instance.owned_project_ids = str_to_array(instance.owned_project_ids)
+
+    if instance.contributer_project_ids.__class__ != list:
+        instance.contributer_project_ids = str_to_array(instance.contributer_project_ids)
+
+    if instance.update_ids.__class__ != list:
+        instance.update_ids = str_to_array(instance.update_ids)
+
+
 post_save.connect(create_user_profile, sender=User)
+pre_save.connect(clean_listfields, sender=UserProfile)
 
 admin.site.register(UserProfile)
 admin.site.register(InviteCode)

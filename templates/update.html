@@ -4,7 +4,11 @@
 <div class="info_top">
 
     {% block title %}
-        <h2>{{ update.title }}</h2>
+        {% if request.user == update.author %}
+            <h2>{{ update.title }}<span class="medium" style="margin-left:10px;"><a class='ajax_link' href='/blurb/{{ update.id }}/?edit=t'><img src="/media/ui/page_edit.png"/>Edit</a></span></h2>
+        {% else %}
+            <h2>{{ update.title }}</h2>
+        {% endif %}
     {% endblock %}
 
     <div class="info_thumb">
@@ -15,13 +19,9 @@
         {% endblock thumb %}
     </div>
 
-    {% include 'update_attribution_inlines.html' %} 
-
-    {% if request.user == update.author %}
-        <p>
-        <a class='ajax_link' href='/blurb/{{ update.id }}/?edit=t'>Edit</a>
-        </p>
-    {% endif %}
+    {% block attribution %}
+        {% include 'update_attribution_inlines.html' %} 
+    {% endblock %}
 
 </div>
 

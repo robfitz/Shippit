@@ -6,26 +6,41 @@
         {% csrf_token %}
 
         <input type="hidden" value="{{ update.id }}" name="update" /> 
+
         <input type="hidden" value="blog" />
 
 {% endblock %}
 
-{% block thumb %}
+{% block thumb %} 
+{% endblock %}
 
-    {{ block.super }}
-
-    <input name="thumbnail" id="thumbnail_upload" type="file" />
-
+{% block attribution %}
 {% endblock %}
 
 {% block title %}
 
-<input class='input edit_title' value="{{ update.title }}" id="title_id" name="title" />
+<h3>Post title</h3>
+<input class='input' value="{{ update.title }}" id="title_id" name="title" />
+
+<h3>Thumbnail <span class="medium">Optional. Defaults to show project or user.</span></h3>
+<input name="thumbnail" id="thumbnail_upload" type="file" />
 
 {% endblock %}
 
 {% block content %}
 
+    <h3>Project <span class="medium"> Which of your projects does this post refer to?</span></h3>
+
+    <select name="project">
+        <option value="">It's a free-standing blog post (no project)</option>
+
+        {% for project in request.user.get_profile.all_projects %}
+            <option value="{{ project.id }}">{{ project.title }}</option>
+        {% endfor %}
+
+    </select>
+
+    <h3>Post contents</h3>
     <textarea id="content_id" name="content">{{ update.content }}</textarea>
 
     <input type="submit" class="button blue" value="Publish" />
