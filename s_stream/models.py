@@ -25,6 +25,7 @@ class Update(models.Model):
             ("pitch", "Elevator pitch"),
 
             # development work 
+            ("dev log", "Development log"),
             ("new project", "New project"), 
             ("screenshots", "New screenshots"),
             ("video", "New video"),
@@ -152,7 +153,7 @@ def create_update(sender, instance, created, **kwargs):
         instance.project.update_ids.append(instance.id)
         instance.project.save()
 
-    if instance.author and instance.id not in instance.author.update_ids:
+    if instance.author and instance.id not in instance.author.get_profile().update_ids:
         # attach update to the user responsible for publishing this 
         instance.author.get_profile().update_ids.append(instance.id)
         instance.author.get_profile().save()

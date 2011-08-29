@@ -112,6 +112,7 @@ def update_info(request, update_id):
                     update.project.remove_update(update)
                 project = Project.objects.get(id=project_id)
                 update.project = project
+                update.type="dev log"
             except:
                 update.project = None
 

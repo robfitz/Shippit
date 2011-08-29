@@ -1,0 +1,15 @@
+I've overhauled most of the game logic for Diamonrun. In my initial hurry to get a <a href="http://multiplayful.appspot.com">prototype</a> working, I ended up making entirely different game models on the server & client. Big mistake, which made basic game tweaks tedious or impossible.
+
+The refactor took a lot of time, but I think it was/is worth it. The major goals were:
+
+* Identical game models on client & server (done)
+* Avoid storing any game state in the client DOM (done)
+* Get everything working again (ongoing)
+
+While separating the game's model & views within javascript, I ended up at a scripting system I'm quite pleased with.
+
+gamemaster.js is responsible for manipulating the json game model. It can change the game state instantly, without worrying about animation delays. Whenever it tweaks a part of the model which should be visually displayed, it calls: 
+
+queue_effect({'action': 'action_name', 'change': 'delta_value', 'target': game_object });
+
+If the effects queue was previously empty, it will begin playing back with the appropriate pauses until the queue is emptied again. When the gamemaster.js needs to wait for user input , it simply stops queueing effects. Otherwise, it can run through all non-UI actions instantly, using an identical [ported] version of the server-side game logic.
